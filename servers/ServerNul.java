@@ -36,21 +36,25 @@ public class ServerNul {
 
 
     /**
-		Constructor
-	*/
+     * Constructor
+     * 
+     * @param portNumber
+     */
     public ServerNul(int portNumber) {
 		this.portNumber = portNumber;
     }
 
     
-
+    
     /**
-        Start the simple server : 
-         - Load the data
-         - Open a socket
-         - Wait far a connection
-         - Add the request to the queue
-    */
+     * Start the simple server : 
+     *    - Load the data
+     *    - Open a socket
+     *    - Wait far a connection
+     *    - Add the request to the queue
+     * 
+     * @throws IOException
+     */
     public void start() throws IOException {
 
         /*
@@ -82,8 +86,10 @@ public class ServerNul {
 
 
 
-    /* 
+    /**
      * Load the data
+     * 
+     * @throws IOException
      */
     public void loadMainMemory() throws IOException {
 
@@ -109,8 +115,10 @@ public class ServerNul {
 
 
 
-    /*
+    /**
      * Process a request by searching the matching line in Main memory and them back to the client
+     * 
+     * @param request
      */
     public void searchLine(String request) {
         /*
@@ -159,8 +167,8 @@ public class ServerNul {
 
 
 
-    /*
-	 * Stop the server and close the streams
+    /**
+     * Stop the server and close the streams
      */
     public void stop() {
         try {
@@ -173,7 +181,6 @@ public class ServerNul {
             System.out.println(e.getMessage());
         }
     }
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

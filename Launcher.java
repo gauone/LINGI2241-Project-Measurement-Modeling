@@ -1,4 +1,10 @@
+
+
 import java.io.IOException;
+
+import servers.ServerNul;
+import clients.Client;
+
 
 public class Launcher {
 
@@ -10,6 +16,9 @@ public class Launcher {
         }
 
         int portNumber = Integer.parseInt(args[0]);
+
+        ServerNul server = new ServerNul(portNumber);
+        server.start();
 
     }
 }
