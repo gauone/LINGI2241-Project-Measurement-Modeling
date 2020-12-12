@@ -14,6 +14,9 @@ import java.util.*;
     java ServerNul 4444
 
     Inspired from "The Knock Knock Server" : https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html
+
+    This server return the whole line, like : 0@@@i thought that was neat.
+    I think we might olny return the string... 
 */
 public class ServerNul {
 
@@ -151,7 +154,6 @@ public class ServerNul {
          * Linear search of the tags & regex into the Main memory
          */
         System.out.println("Linear search");
-        System.out.println(dataTypes.size());
         for(int i = 0; i < dataTypes.size(); i++) {         // for each line in Main memory
             int dataType = dataTypes.get(i);
 
@@ -167,7 +169,8 @@ public class ServerNul {
 
             if(isType) {
                 if(dataSentences.get(i).contains(regex)) {
-                    System.out.println("Responding " + data.get(i) + "to the client");
+                    System.out.println("   ===> Responding " + data.get(i) + " to the client");
+                    System.out.println("\n");
                     clientOut.println(data.get(i));         // Respond directly to the client when a match is found
                 }
             }
@@ -199,7 +202,7 @@ public class ServerNul {
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////
 /*
- * - Whats if I start my server but I don"t directly receive a request on the socket ? I will close and end ? 
+ * - 
  *
  *
  */
