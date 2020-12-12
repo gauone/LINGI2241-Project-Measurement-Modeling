@@ -36,6 +36,9 @@ public class Client {
         @Override
         public void run() {
             // TODO Auto-generated method stub
+            // while(keepRunning()) {
+                
+            // }
             
         }
         
@@ -56,18 +59,17 @@ public class Client {
 
             Boolean InputFromStd = true;
 
+            if (InputFromStd) {
+                String fromUser;
+                fromUser = stdIn.readLine();
+                if (fromUser != null) {
+                    System.out.println("Client: " + fromUser);
+                    clientOut.println(fromUser);
+                }
+            }
+
             String fromServer;
             while ((fromServer = clientIn.readLine()) != null) {
-
-                if(InputFromStd){
-                    String fromUser;
-                    fromUser = stdIn.readLine();
-                    if (fromUser != null) {
-                        System.out.println("Client: " + fromUser);
-                        clientOut.println(fromUser);
-                    }
-                }
-
                 System.out.println("Server: " + fromServer);
             }
         } catch (UnknownHostException e) {

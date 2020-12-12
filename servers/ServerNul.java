@@ -66,10 +66,12 @@ public class ServerNul {
          * Open a socket
          */
         try {
+            System.out.println("Opening a socket and waiting for the client");
             serverSocket = new ServerSocket(portNumber);
             clientSocket = serverSocket.accept();
             clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
             clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            System.out.println("Socket is open !");
         } catch (IOException e) {
             System.out.println("Exception when opening the socket with the portNumber : " + portNumber);
             System.out.println(e.getMessage());
@@ -78,10 +80,12 @@ public class ServerNul {
         /*
          * Read the socket (that have his own queue)
          */
+        System.out.println("Reading the socket");
         String request;
         while((request = clientIn.readLine()) != null) {    // Read a request (that have the following format : "1,2,3;coucou")
             searchLine(request);
         }
+        System.out.println("Ending start()");
     }
 
 
@@ -93,7 +97,8 @@ public class ServerNul {
      */
     public void loadMainMemory() throws IOException {
 
-		BufferedReader bufferedReader = new BufferedReader(new FileReader("../dbdata.txt"));
+        System.out.println("Starting LoadMemory()");
+		BufferedReader bufferedReader = new BufferedReader(new FileReader("dbdata2.txt"));
 		
 		String currentLine = bufferedReader.readLine();
 		for(int i = 0; currentLine != null; i++, currentLine = bufferedReader.readLine()) {
@@ -103,11 +108,8 @@ public class ServerNul {
             String[] splittedLine = currentLine.split("@@@");
 
 			dataTypes.add(Integer.valueOf(splittedLine[0]));
-			dataSentences.add(splittedLine[1]);
-
-			if(i == 10) {
-				break;
-			}
+			dataSentences.add(splittedLine[1].toLowerCase());
+            
 		}
 
         bufferedReader.close();
@@ -121,9 +123,13 @@ public class ServerNul {
      * @param request
      */
     public void searchLine(String request) {
+
+        System.out.println("Starting searchLine()");
+
         /*
          * Getting the types and the regex of the request
          */
+        System.out.println("Getting types and regex from the request");
         List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
         String regex;                                               // String containing the regex asked by the request
         boolean requestAllTypes = false;                            // If the request types is empty => look to all types
@@ -139,15 +145,17 @@ public class ServerNul {
                     requestTypes.add(Integer.valueOf(stringTypes[i]));
             }
         }
-        regex = splittedLine[1];  
+        regex = splittedLine[1].toLowerCase();  
 
         /*
          * Linear search of the tags & regex into the Main memory
          */
+        System.out.println("Linear search");
+        System.out.println(dataTypes.size());
         for(int i = 0; i < dataTypes.size(); i++) {         // for each line in Main memory
             int dataType = dataTypes.get(i);
 
-            boolean isType = true;
+            boolean isType = true;                          // For the case when requestAllTypes == true 
             if(requestAllTypes == false) {                  // If we are not looking to all types
                 isType = false;                     
                 for(int requestType : requestTypes) {
@@ -159,6 +167,7 @@ public class ServerNul {
 
             if(isType) {
                 if(dataSentences.get(i).contains(regex)) {
+                    System.out.println("Responding " + data.get(i) + "to the client");
                     clientOut.println(data.get(i));         // Respond directly to the client when a match is found
                 }
             }
@@ -171,6 +180,7 @@ public class ServerNul {
      * Stop the server and close the streams
      */
     public void stop() {
+        System.out.println("Stopping the server");
         try {
 			serverSocket.close();
 			clientSocket.close();
