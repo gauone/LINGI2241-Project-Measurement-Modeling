@@ -1,6 +1,15 @@
 import java.net.*;
 import java.io.*;
 
+/**
+    Write a simple server that accepts requests from a client through the network.
+    The server open a socket on a certain TCP port and wait for incoming requests from the client.
+
+    This command starts the server program ServerNul so that it listens on TCP port 4444 : 
+    java ServerNul 4444
+
+    Inspired from "The Knock Knock Server" : https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html
+*/
 public class ServerNul {
     public static void main(String[] args) throws IOException {
         
