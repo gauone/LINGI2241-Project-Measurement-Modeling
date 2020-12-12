@@ -11,6 +11,6 @@ public class LauncherClient {
 
         int portNumber = 3900;
 
-        Client client = new Client("localhost", portNumber);
+        Client client = new Client("localhost", portNumber, true);
     }
 }
