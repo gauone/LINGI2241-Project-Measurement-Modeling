@@ -1,5 +1,7 @@
 package clients;
 
+import java.io.IOException;
+
 public class CallClient {
     public static void main(String[] args) throws IOException {
         if (args.length != 2) {
@@ -9,6 +11,6 @@ public class CallClient {
 
         String hostName = args[0];
         int portNumber = Integer.parseInt(args[1]);
-        Client myClient =  new Client(hostName, portNumber)
+        Client myClient =  new Client(hostName, portNumber);
     }
 }
