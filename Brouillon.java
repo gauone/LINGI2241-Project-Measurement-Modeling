@@ -7,27 +7,22 @@ public class Brouillon {
 
 	public static void main(String[] args) throws IOException {
 
-		// Main Memory
-		List<Integer> dataTypes = new ArrayList<Integer>();
-		List<String> dataSentences = new ArrayList<String>();
+		String request = ";coucou";
+		boolean requestAllTypes = false;
 
-		// Load the data
-		BufferedReader bufferedReader;
-		bufferedReader = new BufferedReader(new FileReader("dbdata.txt")); // Rajouter ../ !
-		
-		String currentLine = bufferedReader.readLine();
-		for(int i = 0; currentLine != null; i++, currentLine = bufferedReader.readLine()) {
-			String[] splittedLine = currentLine.split("@@@");
+		String[] splittedLine = request.split(";");
 
-			dataTypes.add(Integer.valueOf(splittedLine[0]));
-			dataSentences.add(splittedLine[1]);
-
-			if(i == 10) {
-				break;
+		if(splittedLine[0].equals("")) {
+			requestAllTypes = true;
+		}
+		else {
+			String[] stringTypes = splittedLine[0].split(",");
+			List<Integer> requestTypes = new ArrayList<Integer>();
+			for(int i = 0; i < stringTypes.length; i++) {
+					requestTypes.add(Integer.valueOf(stringTypes[i]));
 			}
 		}
 
-		bufferedReader.close();
-
+		String regex = splittedLine[1];
 	}
 }

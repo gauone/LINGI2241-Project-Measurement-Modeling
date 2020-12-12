@@ -2,7 +2,8 @@ package servers;
 
 import java.net.*;
 import java.io.*;
-import java.util.*;  
+import java.util.*;
+
 
 
 /**
@@ -16,41 +17,84 @@ import java.util.*;
 */
 public class ServerNul {
 
+
+
     // Port number
     int portNumber;
 
-    // Main Memory
-    List<Integer> dataTypes = new ArrayList<Integer>();
-    List<String> dataSentences = new ArrayList<String>();
+    // Socket
+    ServerSocket serverSocket;
+    Socket clientSocket;
+    PrintWriter clientOut;
+    BufferedReader clientIn;
 
-    // Queue
-    List<String> requestList = new ArrayList<String>();
+    // Main Memory
+    List<String> data = new ArrayList<String>();            // List of Strings containing the whole line : 2.442.237
+    List<Integer> dataTypes = new ArrayList<Integer>();     // List of Integers containing the types per line : 2.442.237
+    List<String> dataSentences = new ArrayList<String>();   // List of Strings containing the Strings per line : 2.442.237
+
+
 
     /**
 		Constructor
 	*/
     public ServerNul(int portNumber) {
 		this.portNumber = portNumber;
-	}
+    }
+
+    
 
     /**
         Start the simple server : 
          - Load the data
+         - Open a socket
          - Wait far a connection
          - Add the request to the queue
     */
     public void start() throws IOException {
 
-		// Main Memory
-		List<Integer> dataTypes = new ArrayList<Integer>();
-		List<String> dataSentences = new ArrayList<String>();
+        /*
+         * Load the data into Main memory
+         */
+        loadMainMemory();
+        
+        /*
+         * Open a socket
+         */
+        try {
+            serverSocket = new ServerSocket(portNumber);
+            clientSocket = serverSocket.accept();
+            clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
+            clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        } catch (IOException e) {
+            System.out.println("Exception when opening the socket with the portNumber : " + portNumber);
+            System.out.println(e.getMessage());
+        }
+            
+        /*
+         * Read the socket (that have his own queue)
+         */
+        String request;
+        while((request = clientIn.readLine()) != null) {    // Read a request (that have the following format : "1,2,3;coucou")
+            searchLine(request);
+        }
+    }
 
-		// Load the data
+
+
+    /* 
+     * Load the data
+     */
+    public void loadMainMemory() throws IOException {
+
 		BufferedReader bufferedReader = new BufferedReader(new FileReader("../dbdata.txt"));
 		
 		String currentLine = bufferedReader.readLine();
 		for(int i = 0; currentLine != null; i++, currentLine = bufferedReader.readLine()) {
-			String[] splittedLine = currentLine.split("@@@");
+
+            data.add(currentLine);
+
+            String[] splittedLine = currentLine.split("@@@");
 
 			dataTypes.add(Integer.valueOf(splittedLine[0]));
 			dataSentences.add(splittedLine[1]);
@@ -60,42 +104,85 @@ public class ServerNul {
 			}
 		}
 
-		bufferedReader.close();
-
-
-        try ( 
-            ServerSocket serverSocket = new ServerSocket(portNumber);
-            Socket clientSocket = serverSocket.accept();
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        ) {
-        
-            String inputLine, outputLine;
-            
-            // Initiate conversation with client
-            // outputLine = kkp.processInput(null);
-            // out.println(outputLine);
-
-            // while ((inputLine = in.readLine()) != null) {
-            //     outputLine = kkp.processInput(inputLine);
-            //     out.println(outputLine);
-            //     if (outputLine.equals("Bye."))
-            //         break;
-            // }
-            
-        } catch (IOException e) {
-            System.out.println("Exception caught when trying to listen on port " + portNumber + " or listening for a connection");
-            System.out.println(e.getMessage());
-        }
-
+        bufferedReader.close();
     }
 
 
-    /**
-		Stop the server and close the streams
-    */
-    
-    /**
-		Process a request
-	*/
+
+    /*
+     * Process a request by searching the matching line in Main memory and them back to the client
+     */
+    public void searchLine(String request) {
+        /*
+         * Getting the types and the regex of the request
+         */
+        List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
+        String regex;                                               // String containing the regex asked by the request
+        boolean requestAllTypes = false;                            // If the request types is empty => look to all types
+
+        String[] splittedLine = request.split(";");                 // Split to have the tags (String) and the regex
+
+        if(splittedLine[0].equals("")) {
+            requestAllTypes = true;
+        }
+        else {
+            String[] stringTypes = splittedLine[0].split(",");
+            for(int i = 0; i < stringTypes.length; i++) {
+                    requestTypes.add(Integer.valueOf(stringTypes[i]));
+            }
+        }
+        regex = splittedLine[1];  
+
+        /*
+         * Linear search of the tags & regex into the Main memory
+         */
+        for(int i = 0; i < dataTypes.size(); i++) {         // for each line in Main memory
+            int dataType = dataTypes.get(i);
+
+            boolean isType = true;
+            if(requestAllTypes == false) {                  // If we are not looking to all types
+                isType = false;                     
+                for(int requestType : requestTypes) {
+                    if(requestType == dataType) {
+                        isType = true;                      // if dataType correspond to one of the requestType
+                    }
+                }
+            }
+
+            if(isType) {
+                if(dataSentences.get(i).contains(regex)) {
+                    clientOut.println(data.get(i));         // Respond directly to the client when a match is found
+                }
+            }
+        }
+    }
+
+
+
+    /*
+	 * Stop the server and close the streams
+     */
+    public void stop() {
+        try {
+			serverSocket.close();
+			clientSocket.close();
+            clientOut.close();
+            clientIn.close();
+        } catch(IOException e) {
+            System.out.println("IOException at Server.stop()");
+            System.out.println(e.getMessage());
+        }
+    }
+
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  NOTES
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+ * - Whats if I start my server but I don"t directly receive a request on the socket ? I will close and end ? 
+ *
+ *
+ */
