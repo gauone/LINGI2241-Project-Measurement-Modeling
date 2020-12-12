@@ -1,9 +1,8 @@
-
-
 import java.io.IOException;
 
-import servers.ServerNul;
-import clients.Client;
+import servers.*;
+import clients.*;
+
 
 
 public class LauncherServer {
@@ -18,8 +17,18 @@ public class LauncherServer {
 
         int portNumber = 3900;
 
-        ServerNul server = new ServerNul(portNumber);
-        server.start();
-        server.stop();
+        /*
+         * ServerNul
+         */
+        // ServerNul serverNul = new ServerNul(portNumber);
+        // serverNul.start();
+        // serverNul.stop();
+
+        /*
+         * ServerFort
+         */
+        ServerFort serverFort = new ServerFort(portNumber);
+        serverFort.start();
+        serverFort.stop();
     }
 }
