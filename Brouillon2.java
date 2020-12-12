@@ -1,5 +1,5 @@
-public class Brouillon {
-	public static void main(String[] args) throws IOException {
+public class Brouillon2 {
+	public static void main(String[] args) {
         System.out.println("Hello world !");
 	}
 }

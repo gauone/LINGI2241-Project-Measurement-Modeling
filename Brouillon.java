@@ -5,11 +5,11 @@ import java.util.*;
 
 public class Brouillon {
 
-	// Main Memory
-	List<Integer> dataTypes = new ArrayList<Integer>();
-	List<String> dataSentences = new ArrayList<String>();
-
 	public static void main(String[] args) throws IOException {
+
+		// Main Memory
+		List<Integer> dataTypes = new ArrayList<Integer>();
+		List<String> dataSentences = new ArrayList<String>();
 
 		// Load the data
 		BufferedReader bufferedReader;
@@ -19,12 +19,8 @@ public class Brouillon {
 		for(int i = 0; currentLine != null; i++, currentLine = bufferedReader.readLine()) {
 			String[] splittedLine = currentLine.split("@@@");
 
-			// dataTypes[i] = splittedLine[0];
-			// dataSentences[i] = splittedLine[1];
-
-			System.out.println("Reading the " + i + "th line : ");
-			System.out.println("   dataTypes = " + splittedLine[0]);
-			System.out.println("   dataSentences = " + splittedLine[1]);
+			dataTypes.add(Integer.valueOf(splittedLine[0]));
+			dataSentences.add(splittedLine[1]);
 
 			if(i == 10) {
 				break;
