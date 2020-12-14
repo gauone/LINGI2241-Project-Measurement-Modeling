@@ -74,29 +74,9 @@ public class Client {
             Thread thread = new Thread( this.myServerListener );
             thread.start();
             
-            // if the first request is to be read from std
+            // if some requests are to be read from std
             if (inputFromStd) {
-                BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-                String fromUser;
-                fromUser = stdIn.readLine();
-                if (fromUser != null) {
-                    System.out.println("Client: " + fromUser);
-                    clientOut.println(fromUser);
-                }
-            }
-
-            if (inputFromStd) {
-                BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-                String fromUser;
-                while ((fromUser = stdIn.readLine()) != "exit") {
-                    if (fromUser != null) {
-                        System.out.println("Client: " + fromUser);
-                        clientOut.println(fromUser);
-                    }
-                }
-                
-                System.out.println("exiting the client");
-                this.stopClient();
+                sendRequestFromStd();
             }
 
 
@@ -132,8 +112,38 @@ public class Client {
     public synchronized void sendRequest(List<Integer> types, String regex) {
         String typesString = types.stream().map(n -> String.valueOf(n)).collect(Collectors.joining(",")); //line from https://www.geeksforgeeks.org/java-8-streams-collectors-joining-method-with-examples/
         long startTime = System.nanoTime();
-        sendingTimes.add(startTime);
-        clientOut.println(typesString + ";" + regex);
+        this.sendingTimes.add(startTime);
+        this.clientOut.println(typesString + ";" + regex);
+    }
+
+    /**
+     * Send a request to the serveur.
+     * @param request a (String) of type <types>;<regex>
+     */
+    public synchronized void sendRequest(String request) {
+        long startTime = System.nanoTime();
+        this.sendingTimes.add(startTime);
+        this.clientOut.println(request);
+    }
+    /**
+     * Listen for requests from std. Those should be of the form <types>;<regex>
+     */
+    public void sendRequestFromStd() {
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+        String fromUser;
+        try {
+            while ( !(fromUser = stdIn.readLine()).equals("exit") ) {
+                if (fromUser != null) {
+                    System.out.println("Client: " + fromUser);
+                    this.sendRequest(fromUser);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("exiting the client");
+        this.stopClient();
     }
 
     public void stopClient(){
