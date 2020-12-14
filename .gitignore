@@ -27,3 +27,5 @@ hs_err_pid*
 
 #ignore too large files
 dbdata.txt
+Brouillon.java
+Brouillon2.java
