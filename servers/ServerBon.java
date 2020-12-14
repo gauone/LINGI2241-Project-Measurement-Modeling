@@ -10,7 +10,7 @@ import java.util.*;
 
     This server return only the string of the line, like : 0@@@i thought that was neat => i thought that was neat
 */
-public class ServerFort {
+public class ServerBon {
 
 
 
@@ -32,7 +32,7 @@ public class ServerFort {
      * 
      * @param portNumber
      */
-    public ServerFort(int portNumber) {
+    public ServerBon(int portNumber) {
 		this.portNumber = portNumber;
     }
 
@@ -222,8 +222,10 @@ public class ServerFort {
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////
 /*
- * - Main Memory as a Hashmap (key = word; value = whole line)
+ * - Main Memory as a Hashmap (key = type; value = sentences)
  * - Deleting the requestAllTypes boolean
  * - Add buffer off sended request to avoid duplicates with differents types (So preprocessing is not needed)
  * 
+ * - Keep the most recent request ? 
+ * - Multithread ?
  */
