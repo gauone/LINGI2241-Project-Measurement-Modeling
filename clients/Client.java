@@ -15,8 +15,8 @@ public class Client {
     protected PrintWriter clientOut; // to send info to server
     protected BufferedReader clientIn; // to get info from the server
     
-    protected ArrayList<Long> sendingTimes;
-    protected ArrayList<Long> arrivingTimes;
+    protected ArrayList<Long> sendingTimes = new ArrayList<Long>();
+    protected ArrayList<Long> arrivingTimes = new ArrayList<Long>();
 
     ServerListener myServerListener;
 
@@ -47,7 +47,7 @@ public class Client {
             try {
                 while (keepRunning() && (fromServer = clientIn.readLine()) != null) {
                     long endTime = System.nanoTime();
-                    arrivingTimes.add(endTime);
+                    Client.this.arrivingTimes.add(endTime);
                     System.out.println("Server: " + fromServer);
                 }
             } catch (IOException e) {
@@ -62,14 +62,18 @@ public class Client {
      * 
      * @param hostName   a (Sting) containing the name of the server's hostname
      * @param portNumber a (int) containing the port number to reach the server
-     * @param inputFromStd a (Boolean) telling if the first request is to be listened from std.
+     * @param inputFromStd a (Boolean) telling if the some requests are to be listened from std.
      */
     public Client(String hostName, int portNumber, Boolean inputFromStd) {
         try {
             clientSocket = new Socket(hostName, portNumber);
             clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
             clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
+            
+            this.myServerListener = new ServerListener();
+            Thread thread = new Thread( this.myServerListener );
+            thread.start();
+            
             // if the first request is to be read from std
             if (inputFromStd) {
                 BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
@@ -81,9 +85,20 @@ public class Client {
                 }
             }
 
-            this.myServerListener = new ServerListener();
-            Thread thread = new Thread( this.myServerListener );
-            thread.start();
+            if (inputFromStd) {
+                BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+                String fromUser;
+                while ((fromUser = stdIn.readLine()) != "exit") {
+                    if (fromUser != null) {
+                        System.out.println("Client: " + fromUser);
+                        clientOut.println(fromUser);
+                    }
+                }
+                
+                System.out.println("exiting the client");
+                this.stopClient();
+            }
+
 
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);
@@ -128,6 +143,6 @@ public class Client {
         for (int i=0; i < minLen ;i++) {
             strBuf.append(this.arrivingTimes.get(i) - this.sendingTimes.get(i) );
         }
-        System.out.println("Result: " + strBuf.toString());
+        System.out.println("Results: " + strBuf.toString());
     }
 }
