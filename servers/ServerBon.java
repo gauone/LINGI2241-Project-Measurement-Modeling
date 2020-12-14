@@ -76,6 +76,7 @@ public class ServerBon {
         String request;
         while((request = clientIn.readLine()) != null) {    // Read a request (that have the following format : "1,2,3;coucou")
             searchLine(request);
+            clientOut.println("\n");
         }
         System.out.println("Ending start()");
     }

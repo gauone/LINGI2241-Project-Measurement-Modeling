@@ -14,7 +14,8 @@ public class Brouillon2 {
 		String currentLine;
         while((currentLine = bufferedReader.readLine()) != null) {
 
-			String[] splittedLine = currentLine.split(" ");
+			String[] splittedLine = currentLine.split("@@@");
+			splittedLine = splittedLine[1].split(" ");
 
 			for(int i = 0; i < splittedLine.length; i++) {
 
@@ -22,21 +23,69 @@ public class Brouillon2 {
 				ArrayList<String> sentences = new ArrayList<String>();
 
 				if(!data.containsKey(word)) {			// If the word is not in memory : put it with the (first) sentence where it is found
-					sentences.add(currentLine);
+					sentences.add(currentLine.toLowerCase());
 					data.put(word, sentences);
 				}
 				else {
 					sentences = data.remove(word);		// If the word is already in memory : get the associated sentences, add it the new one and actualise the memory
-					sentences.add(currentLine);
+					sentences.add(currentLine.toLowerCase());
 					data.put(word, sentences);
 				}
 			}
 		}
 
-			
-
-
 		bufferedReader.close();
+
+		String request = "1,2,3;second"; 	// 2 occurence of type 1 and 2
+
+        /*
+         * Getting the types and the regex of the request
+         */
+        System.out.println("Getting types and regex from the request");
+        List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
+        String regex;                                               // String containing the regex asked by the request
+
+        String[] splittedLine = request.split(";");                 // Split to have the tags (String) and the regex
+
+        if(splittedLine[0].equals("")) {                            // If the request do not contain a type, we are looking for each of them
+            splittedLine[0] = "0,1,2,3,4,5";
+        }
+
+        String[] stringTypes = splittedLine[0].split(",");
+        for(int i = 0; i < stringTypes.length; i++) {
+                requestTypes.add(Integer.valueOf(stringTypes[i]));
+        }
+
+		regex = splittedLine[1].toLowerCase(); 
 		
+		/*
+         * testing the memory storage
+         */
+		ArrayList<ArrayList> sentences = new ArrayList<ArrayList>();
+        String[] splittedRegex = request.split(" ");
+		for(int i = 0; i < splittedRegex.length; i++) {					// For each uniRegex
+
+			String uniRegex = splittedRegex[i];
+			ArrayList<String> uniRegexSentences = data.get(uniRegex);
+
+			for(int j = 0; j < uniRegexSentences.size(); j++) {			// For each sentences associated to the uniRegex
+
+				String[] splittedUniRegexSentence = currentLine.split("@@@");
+				String sentence = splittedUniRegexSentence[1];
+				String type = splittedUniRegexSentence[0];
+
+				if(requestTypes.contains(type)) {						// If the sentence have a requested type
+					
+					
+
+				}
+			}
+			sentences = data.get(regex)
+		}
+		
+
+
+		System.out.println("End of the main()");
+
 	}
 }
