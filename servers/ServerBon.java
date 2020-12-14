@@ -187,9 +187,9 @@ public class ServerBon {
                     String returnSentence = sentences.get(i);
                     if(!sendedSentences.contains(returnSentence)) {     // Send only if we do not have send this string for the actual request
                         sendedSentences.add(returnSentence);
-                        System.out.println("   ===> Responding " + sentences.get(i) + " to the client");
+                        System.out.println("   ===> Responding \"" + returnSentence + "\" to the client");
                         System.out.println("\n");
-                        clientOut.println(data.get(i));
+                        clientOut.println(returnSentence);
                     }
                 }
             }

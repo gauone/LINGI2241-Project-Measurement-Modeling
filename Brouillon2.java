@@ -19,7 +19,7 @@ public class Brouillon2 {
 			for(int i = 0; i < splittedLine.length; i++) {
 
 				String word = splittedLine[i];
-				ArrayList<String> sentences = new ArrayList<String>;
+				ArrayList<String> sentences = new ArrayList<String>();
 
 				if(!data.containsKey(word)) {			// If the word is not in memory : put it with the (first) sentence where it is found
 					sentences.add(currentLine);

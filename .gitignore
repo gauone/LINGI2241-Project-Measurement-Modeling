@@ -25,7 +25,8 @@ hs_err_pid*
 #repo mac files
 .DS_Store
 
-#ignore too large files
+#ignore too large files etc...
 dbdata.txt
 Brouillon.java
 Brouillon2.java
+serverFort_request_exemples.txt
