@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import logger.MyLogger;
+
 public class Client {
     protected Socket clientSocket;
     protected PrintWriter clientOut; // to send info to server
@@ -37,7 +39,8 @@ public class Client {
 
         // method to look if doStop is at false
         private synchronized boolean keepRunning() {
-            return this.doStop == false;
+            //Boolean atEndOfResponse = arrivingTimes.get(arrivingTimes.size()).equals(Long.valueOf(0));
+            return this.doStop == false;// && !atEndOfResponse;
         }
 
         // This is the function called when we launch the tread by doing Thread.start().
@@ -45,14 +48,26 @@ public class Client {
         public void run() {
             String fromServer;
             try {
-                while (keepRunning() && (fromServer = clientIn.readLine()) != null) {
+                Boolean isAtEndOfResponse = true; //this boolean is use to wait for the end of the response before stopping.
+                while ( ( keepRunning() || !isAtEndOfResponse ) && (fromServer = clientIn.readLine()) != null ) {
                     long endTime = System.nanoTime();
                     Client.this.arrivingTimes.add(endTime);
                     System.out.println("Server: " + fromServer);
+
+                    //we receive a \n as a end of response marker
+                    if (fromServer.equals("\n") ) {
+                        isAtEndOfResponse = true;
+                        Client.this.arrivingTimes.add( Long.valueOf(0) );
+                        System.out.println("Server: " + "\\n");
+                    } else {
+                        isAtEndOfResponse = false;
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            System.out.println("Stop listening the server");
         }
     }
 
@@ -125,6 +140,7 @@ public class Client {
         this.sendingTimes.add(startTime);
         this.clientOut.println(request);
     }
+    
     /**
      * Listen for requests from std. Those should be of the form <types>;<regex>
      */
@@ -141,18 +157,34 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-        System.out.println("exiting the client");
         this.stopClient();
     }
 
     public void stopClient(){
+        System.out.println("closingClient " + this);
+
+        // Stop the server listening thread
         this.myServerListener.doStop();
-        int minLen = java.lang.Math.min(this.sendingTimes.size(), this.arrivingTimes.size());
-        StringBuffer strBuf = new StringBuffer(minLen);
-        for (int i=0; i < minLen ;i++) {
-            strBuf.append(this.arrivingTimes.get(i) - this.sendingTimes.get(i) );
+
+        // Compute the responses times
+        ArrayList<Long> responsesTime = new ArrayList<Long>();
+        Long start, stop;
+        int indexArrival = 0;
+        for (int i=0; i < this.sendingTimes.size(); i++) {
+            start = this.sendingTimes.get(i);
+            stop = this.arrivingTimes.get(indexArrival);
+            while ( (!stop.equals(Long.valueOf(0))) && indexArrival <= this.arrivingTimes.size() ) {
+                responsesTime.add(stop - start);
+                indexArrival++;
+                stop = this.arrivingTimes.get(indexArrival);
+            }
+            responsesTime.add(Long.valueOf(0));
+            if (indexArrival < arrivingTimes.size()) {
+                indexArrival = indexArrival+1;
+            }
         }
-        System.out.println("Results: " + strBuf.toString());
+
+        // Write the response times to a file.
+        MyLogger.getInstance().println(responsesTime);
     }
 }
