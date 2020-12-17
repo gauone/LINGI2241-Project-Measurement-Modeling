@@ -5,11 +5,14 @@ public class Brouillon {
 
 	public static void main(String[] args) throws IOException {
 
-        List<String> columnsOld = Arrays.asList("red", "blue", "blue", "green", "red");
-        List<String> columnsNew = Arrays.asList("red", "green", "green", "yellow");
+                String empty = "";
+                String cr = "\n";
 
-        columnsOld.retainAll(columnsNew);
+                System.out.println(empty);
+                System.out.println("----------------");
+                System.out.println(cr);
+                System.out.println("----------------");
 
-        System.out.println("End");
+                System.out.println("End");
 	}
 }

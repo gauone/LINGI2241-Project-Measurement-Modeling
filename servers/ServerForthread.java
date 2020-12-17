@@ -13,9 +13,11 @@ import java.util.regex.Pattern;
 
     This server return only the string of the line, like : 0@@@i thought that was neat => i thought that was neat
 */
-public class ServerFort {
+public class ServerForthread implements Runnable {
 
-
+    // Thread
+    protected boolean isStopped = false;
+    protected Thread runningThread = null;
 
     // Port number
     int portNumber;
@@ -36,17 +38,53 @@ public class ServerFort {
     int cacheSize = 0;      // Amount of request in the cache
     int nReset = 3;
 
+
+
     /**
      * Constructor
      * 
      * @param portNumber
      */
-    public ServerFort(int portNumber) {
+    public ServerForthread(int portNumber) {
 		this.portNumber = portNumber;
     }
 
-    
-    
+
+
+    /**
+     * 
+     */
+    public void run() {
+        synchronized(this) {
+            this.runningThread = Thread.currentThread();
+        }
+        openServerSocket();
+        while(!isStopped()) {
+            Socket clientSocket = null;
+            try {
+                clientSocket = this.serverSocket.accept();
+            } catch (IOException e) {
+                if(isStopped()) {
+                    System.out.println("Server Stopped.") ;
+                    return;
+                }
+                throw new RuntimeException(
+                    "Error accepting client connection", e);
+            }
+            new Thread(
+                new WorkerRunnable(
+                    clientSocket, "Multithreaded Server")
+            ).start();
+        }
+        System.out.println("Server Stopped.") ;
+    }
+
+
+
+
+
+
+
     /**
      * Start the simple server : 
      *    - Load the data
@@ -287,10 +325,20 @@ public class ServerFort {
 
 
     /**
+     * Return true if this server is stopped ()
+     */
+    private synchronized boolean isStopped() {
+        return this.isStopped;
+    }
+
+
+
+    /**
      * Stop the server and close the streams
      */
-    public void stop() {
+    public synchronized void stop() {
         System.out.println(" - Stopping the server");
+        isStopped = true;
         try {
 			serverSocket.close();
 			clientSocket.close();

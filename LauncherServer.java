@@ -24,10 +24,17 @@ public class LauncherServer {
         // serverNul.stop();
 
         /*
-         * serverNul
+         * serverBon
          */
-        ServerNul serverNul = new ServerNul(portNumber);
-        serverNul.start();
-        serverNul.stop();
+        // ServerBon serverBon = new ServerBon(portNumber);
+        // serverBon.start();
+        // serverBon.stop();
+
+        /*
+         * serverFort
+         */
+        ServerFort serverFort = new ServerFort(portNumber);
+        serverFort.start();
+        serverFort.stop();
     }
 }
