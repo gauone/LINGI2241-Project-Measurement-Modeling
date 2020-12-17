@@ -52,14 +52,14 @@ public class Client {
                 while ( ( keepRunning() || !isAtEndOfResponse ) && (fromServer = clientIn.readLine()) != null ) {
                     long endTime = System.nanoTime();
                     Client.this.arrivingTimes.add(endTime);
-                    System.out.println("Server: " + fromServer);
 
                     //we receive a \n as a end of response marker
                     if (fromServer.equals("\n") ) {
                         isAtEndOfResponse = true;
                         Client.this.arrivingTimes.add( Long.valueOf(0) );
-                        System.out.println("Server: " + "\\n");
+                        System.out.println("Server: -------!!newline!!------");
                     } else {
+                        System.out.println("Server: " + fromServer);
                         isAtEndOfResponse = false;
                     }
                 }
