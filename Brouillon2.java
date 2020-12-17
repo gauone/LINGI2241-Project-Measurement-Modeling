@@ -61,27 +61,37 @@ public class Brouillon2 {
 		/*
          * testing the memory storage
          */
-		ArrayList<ArrayList> sentences = new ArrayList<ArrayList>();
-        String[] splittedRegex = request.split(" ");
-		for(int i = 0; i < splittedRegex.length; i++) {					// For each uniRegex
 
+		ArrayList<ArrayList<String>> regexCandidate = new ArrayList<ArrayList<String>>();
+		String[] splittedRegex = request.split(" ");
+		
+		/*
+		 * Get the sentences associated to each uniRegex
+		 */
+		for(int i = 0; i < splittedRegex.length; i++) {											// For each uniRegex 
+
+			ArrayList<String> uniRegexCandidate = new ArrayList<String>();
 			String uniRegex = splittedRegex[i];
 			ArrayList<String> uniRegexSentences = data.get(uniRegex);
 
-			for(int j = 0; j < uniRegexSentences.size(); j++) {			// For each sentences associated to the uniRegex
+			for(int j = 0; j < uniRegexSentences.size(); j++) {									// For each sentences associated to the uniRegex
 
-				String[] splittedUniRegexSentence = currentLine.split("@@@");
+				String[] splittedUniRegexSentence = uniRegexSentences.get(i).split("@@@");
 				String sentence = splittedUniRegexSentence[1];
-				String type = splittedUniRegexSentence[0];
+				Integer type = Integer.valueOf(splittedUniRegexSentence[0]);
 
-				if(requestTypes.contains(type)) {						// If the sentence have a requested type
-					
-					
-
+				if( requestTypes.contains(type) && !uniRegexCandidate.contains(sentence) ) {	// If the sentence have a requested type and is not already a candidate
+					uniRegexCandidate.add(sentence);
 				}
 			}
-			sentences = data.get(regex)
+
+			regexCandidate.add(uniRegexCandidate);
+
 		}
+
+		/*
+		 * Compare the uniRegexCandidate to get the intersection
+		 */
 		
 
 

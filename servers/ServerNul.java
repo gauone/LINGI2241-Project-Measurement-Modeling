@@ -3,6 +3,8 @@ package servers;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 
@@ -127,8 +129,9 @@ public class ServerNul {
      * @param request
      */
     public void searchLine(String request) {
-
+        
         System.out.println("Starting searchLine()");
+
 
         /*
          * Getting the types and the regex of the request
@@ -136,43 +139,47 @@ public class ServerNul {
         System.out.println("Getting types and regex from the request");
         List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
         String regex;                                               // String containing the regex asked by the request
-        boolean requestAllTypes = false;                            // If the request types is empty => look to all types
 
-        String[] splittedLine = request.split(";");                 // Split to have the tags (String) and the regex
+        String[] splittedLine = request.split(";", 2);              // Split to have the tags (String) and the regex
 
-        if(splittedLine[0].equals("")) {
-            requestAllTypes = true;
+        if(splittedLine[0].equals("")) {                            // If the request do not contain a type, we are looking for each of them
+            splittedLine[0] = "0,1,2,3,4,5";
         }
-        else {
-            String[] stringTypes = splittedLine[0].split(",");
-            for(int i = 0; i < stringTypes.length; i++) {
-                    requestTypes.add(Integer.valueOf(stringTypes[i]));
-            }
+
+        String[] stringTypes = splittedLine[0].split(",");          // RequestTypes as a list of Integer
+        for(int i = 0; i < stringTypes.length; i++) {
+                requestTypes.add(Integer.valueOf(stringTypes[i]));
         }
-        regex = splittedLine[1].toLowerCase();  
+
+        regex = splittedLine[1];  
+
+
+        /*
+         * Getting the types and the regex of the request
+         */
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher;
+
 
         /*
          * Linear search of the tags & regex into the Main memory
          */
         System.out.println("Linear search");
-        for(int i = 0; i < dataTypes.size(); i++) {         // for each line in Main memory
+
+        ArrayList<String> sendedSentences = new ArrayList<String>();                        // List of the string already sended for ONE request (to avoid duplicates)
+
+        for(int i = 0; i < dataTypes.size(); i++) {                                         // For each line in Main memory
             int dataType = dataTypes.get(i);
-
-            boolean isType = true;                          // For the case when requestAllTypes == true 
-            if(requestAllTypes == false) {                  // If we are not looking to all types
-                isType = false;                     
-                for(int requestType : requestTypes) {
-                    if(requestType == dataType) {
-                        isType = true;                      // if dataType correspond to one of the requestType
+            for(int requestType : requestTypes) {                                           // For each requestType
+                if(requestType == dataType) {                                               // If the type of the line match with one of the requestTypes   
+                    String returnSentence = dataSentences.get(i);
+                    matcher = pattern.matcher(returnSentence);
+                    if( matcher.find() && !sendedSentences.contains(returnSentence) ) {     // If we have a match and we do not have send it already (fot this request)
+                        sendedSentences.add(returnSentence);
+                        System.out.println("   ===> Responding \"" + returnSentence + "\" to the client");
+                        System.out.println("\n");
+                        clientOut.println(returnSentence);
                     }
-                }
-            }
-
-            if(isType) {
-                if(dataSentences.get(i).contains(regex)) {
-                    System.out.println("   ===> Responding " + data.get(i) + " to the client");
-                    System.out.println("\n");
-                    clientOut.println(data.get(i));         // Respond directly to the client when a match is found
                 }
             }
         }
