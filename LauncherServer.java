@@ -25,10 +25,10 @@ public class LauncherServer {
         // serverNul.stop();
 
         /*
-         * ServerBon
+         * serverNul
          */
-        ServerBon ServerBon = new ServerBon(portNumber);
-        ServerBon.start();
-        ServerBon.stop();
+        ServerNul serverNul = new ServerNul(portNumber);
+        serverNul.start();
+        serverNul.stop();
     }
 }

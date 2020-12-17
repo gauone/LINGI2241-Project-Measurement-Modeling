@@ -89,7 +89,7 @@ public class ServerNul {
         String request;
         while((request = clientIn.readLine()) != null) {    // Read a request (that have the following format : "1,2,3;coucou")
             searchLine(request);
-            clientOut.println("\n");
+            clientOut.print("\n");
         }
         System.out.println("Ending start()");
     }
@@ -153,19 +153,14 @@ public class ServerNul {
 
         regex = splittedLine[1];  
 
-
-        /*
-         * Getting the types and the regex of the request
-         */
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher;
-
-
+        
         /*
          * Linear search of the tags & regex into the Main memory
          */
         System.out.println("Linear search");
 
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher;
         ArrayList<String> sendedSentences = new ArrayList<String>();                        // List of the string already sended for ONE request (to avoid duplicates)
 
         for(int i = 0; i < dataTypes.size(); i++) {                                         // For each line in Main memory

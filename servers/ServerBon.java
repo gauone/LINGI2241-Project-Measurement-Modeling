@@ -3,6 +3,9 @@ package servers;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 
 /**
@@ -159,7 +162,7 @@ public class ServerBon {
         List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
         String regex;                                               // String containing the regex asked by the request
 
-        String[] splittedLine = request.split(";");                 // Split to have the tags (String) and the regex
+        String[] splittedLine = request.split(";", 2);                 // Split to have the tags (String) and the regex
 
         if(splittedLine[0].equals("")) {                            // If the request do not contain a type, we are looking for each of them
             splittedLine[0] = "0,1,2,3,4,5";
@@ -177,21 +180,22 @@ public class ServerBon {
          *    requestTypes = [1, 2, 3]
          *    regex = "second"
          */
-        System.out.println("Linear search");
+        System.out.println("Linear search in hashMap");
 
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher;
         ArrayList<String> sendedSentences = new ArrayList<String>();    // List of the string already sended for ONE request (to avoid duplicates)
 
         for(int requestType : requestTypes) {
             ArrayList<String> sentences = data.get(requestType);
             for(int i = 0; i < sentences.size(); i++) {
-                if(sentences.get(i).contains(regex)) {
-                    String returnSentence = sentences.get(i);
-                    if(!sendedSentences.contains(returnSentence)) {     // Send only if we do not have send this string for the actual request
-                        sendedSentences.add(returnSentence);
-                        System.out.println("   ===> Responding \"" + returnSentence + "\" to the client");
-                        System.out.println("\n");
-                        clientOut.println(returnSentence);
-                    }
+                String returnSentence = sentences.get(i);
+                matcher = pattern.matcher(returnSentence);
+                if( matcher.find() && !sendedSentences.contains(returnSentence) ) {     // If we have a match and we do not have send it already (fot this request)
+                    sendedSentences.add(returnSentence);
+                    System.out.println("   ===> Responding \"" + returnSentence + "\" to the client");
+                    System.out.println("\n");
+                    clientOut.println(returnSentence);
                 }
             }
         }
