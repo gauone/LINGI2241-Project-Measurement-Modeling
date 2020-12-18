@@ -9,6 +9,20 @@
             "name": "Launch LauncherClient",
             "request": "launch",
             "mainClass": "launchers.LauncherClient",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_45080713"
+        },
+        {
+            "type": "java",
+            "name": "Launch LauncherServer",
+            "request": "launch",
+            "mainClass": "launchers.LauncherServer",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_45080713"
+        },
+        {
+            "type": "java",
+            "name": "Launch LauncherClient",
+            "request": "launch",
+            "mainClass": "launchers.LauncherClient",
             "projectName": "LINGI2241-Project-Measurement-Modeling_7864aa72"
         },
         {

@@ -42,8 +42,15 @@ public class LauncherServer {
         /*
          * serverNulthread
          */
-        ServerNulthread serverNulthread = new ServerNulthread(portNumber, 2);
-        serverNulthread.start();
-        serverNulthread.stop();
+        // ServerNulthread serverNulthread = new ServerNulthread(portNumber, 2);
+        // serverNulthread.start();
+        // serverNulthread.stop();
+
+        /*
+         * serverNulthread
+         */
+        ServerForthread serverForthread = new ServerForthread(portNumber, 2);
+        serverForthread.start();
+        serverForthread.stop();
     }
 }
