@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Brouillon2",
+            "request": "launch",
+            "mainClass": "Brouillon2",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_45080713"
+        },
+        {
+            "type": "java",
+            "name": "Launch Brouillon",
+            "request": "launch",
+            "mainClass": "Brouillon",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_45080713"
+        },
+        {
+            "type": "java",
             "name": "Launch addWordsToRegexCorpus",
             "request": "launch",
             "mainClass": "regexPreprocessing.addWordsToRegexCorpus",
