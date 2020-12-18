@@ -136,7 +136,7 @@ public class Client {
     }
 
     public void launchRequests(double lambda) {
-        // int N = rand.nextInt(500);
+        // int N = rand.nextInt(500)+1;
         int N = 1;
         try {
             for (int i = 0; i < N; i++) {
@@ -255,11 +255,9 @@ public class Client {
             try {
                 int c;
                 String fromServer = "";
-                Boolean isEmpty = false;
-                while (((isEmpty = fromServer.equals("")) || keepRunning()) && (c = clientIn.read()) > 0) {
-                    if (c == '\n' && isEmpty) {
-                        long endTime = System.nanoTime();
-                        Client.this.addToArrivalTimes(endTime);
+                while (keepRunning() && (c = clientIn.read()) > 0) {
+                    if (c == '\n' && fromServer.equals("")) {
+                        Client.this.addToArrivalTimes(System.nanoTime());
                         System.out.println(" - Server : ------- !! New Line !! ------ \n");
                     } else if (c == '\n') {
                         System.out.println(" - Server : " + fromServer + "\n");
