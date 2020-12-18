@@ -11,7 +11,7 @@ public class LauncherClient {
         int nClients = 1;
         Thread[] threads = new Thread[nClients];
 
-        for (int i = 0; i < nClients; i++) {
+        for (int i = 0; i < nClients-1; i++) {
             threads[i] = new Thread(() -> {
                 try {
                     new Client("localhost", portNumber, false, lambda);
