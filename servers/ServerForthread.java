@@ -193,84 +193,89 @@ public class ServerForthread {
                  */
                 System.out.println(" - Getting types and regex from the request");
 
-                List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
-                String regex;                                               // String containing the regex asked by the request
+                try {
+                    List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
+                    String regex;                                               // String containing the regex asked by the request
 
-                String[] splittedLine = request.split(";", 2);              // Split to have the tags (String) and the regex
+                    String[] splittedLine = request.split(";", 2);              // Split to have the tags (String) and the regex
 
-                if(splittedLine[0].equals("")) {                            // If the request do not contain a type, we are looking for each of them
-                    splittedLine[0] = "0,1,2,3,4,5";
-                }
+                    if(splittedLine[0].equals("")) {                            // If the request do not contain a type, we are looking for each of them
+                        splittedLine[0] = "0,1,2,3,4,5";
+                    }
 
-                String[] stringTypes = splittedLine[0].split(",");
-                for(int i = 0; i < stringTypes.length; i++) {
-                        requestTypes.add(Integer.valueOf(stringTypes[i]));
-                }
+                    String[] stringTypes = splittedLine[0].split(",");
+                    for(int i = 0; i < stringTypes.length; i++) {
+                            requestTypes.add(Integer.valueOf(stringTypes[i]));
+                    }
 
-                regex = splittedLine[1].toLowerCase(); 
+                    regex = splittedLine[1].toLowerCase(); 
 
 
-                /*
-                 * Search of the tags & regex into the Main memory
-                 *    requestTypes = [1, 2, 3]
-                 *    regex = "second"
-                 */
-                System.out.println(" - Linear search in Main memory (hashMap)");
+                    /*
+                    * Search of the tags & regex into the Main memory
+                    *    requestTypes = [1, 2, 3]
+                    *    regex = "second"
+                    */
+                    System.out.println(" - Linear search in Main memory (hashMap)");
 
-                Pattern pattern = Pattern.compile(regex);
-                Matcher matcher;
-                ArrayList<String> sendedSentences = new ArrayList<String>();    // List of the string already sended for ONE request (to avoid duplicates)
+                    Pattern pattern = Pattern.compile(regex);
+                    Matcher matcher;
+                    ArrayList<String> sendedSentences = new ArrayList<String>();    // List of the string already sended for ONE request (to avoid duplicates)
 
-                for(int requestType : requestTypes) {
-                    ArrayList<String> sentences = data.get(requestType);
-                    for(int i = 0; i < sentences.size(); i++) {
-                        String returnSentence = sentences.get(i);
-                        matcher = pattern.matcher(returnSentence);
-                        if( matcher.find() && !sendedSentences.contains(returnSentence) ) {     // If we have a match and we do not have send it already (fot this request)
-                            sendedSentences.add(returnSentence);
-                            System.out.println("\n");
-                            System.out.println("   ===> Responding (from main memory) \"" + returnSentence + "\" to the client");
-                            clientOut.println(returnSentence);
+                    for(int requestType : requestTypes) {
+                        ArrayList<String> sentences = data.get(requestType);
+                        for(int i = 0; i < sentences.size(); i++) {
+                            String returnSentence = sentences.get(i);
+                            matcher = pattern.matcher(returnSentence);
+                            if( matcher.find() && !sendedSentences.contains(returnSentence) ) {     // If we have a match and we do not have send it already (fot this request)
+                                sendedSentences.add(returnSentence);
+                                System.out.println("\n");
+                                System.out.println("   ===> Responding (from main memory) \"" + returnSentence + "\" to the client");
+                                clientOut.println(returnSentence);
+                            }
                         }
                     }
+                    
+
+                    /*
+                    * Put the request in cache
+                    */
+                    System.out.println(" - Handle the instruction in cache");
+
+                    if(cacheSize == cacheMaxSize) {
+                        System.out.println(" - One entry have to be removed : cacheSize == cacheMaxSize");
+                        String removedKey = "null";
+                        boolean search = true;
+                        Set<String> keySet = cacheUseBit.keySet();
+                        for (Iterator<String> it = keySet.iterator(); it.hasNext() && search;) {    // Looking for a (the first) key with use bit == 0
+                                String key = it.next();
+                                if(cacheUseBit.get(key) == 0) {
+                                        removedKey = key;
+                                        search = false;
+                                }
+                        }
+            
+                        // Remove the key of the cache (do not forget the use bit)
+                        if(removedKey.equals("null")) {
+                            System.out.println(" /!\\ The cache did not find an entry with the use bit at 0 /!\\ ");
+                        }
+                        else {
+                            System.out.println(" - Removed entry " + removedKey);
+                            cache.remove(removedKey);
+                            cacheUseBit.remove(removedKey);
+                            cacheSize--;
+                        }
+                    }
+
+                    // Put the new request in cache
+                    System.out.println(" - Put the instruction in cache");
+                    cache.put(request, sendedSentences);
+                    cacheUseBit.put(request, 1);
+                    cacheSize++;
                 }
-                
-
-                /*
-                 * Put the request in cache
-                 */
-                System.out.println(" - Handle the instruction in cache");
-
-                if(cacheSize == cacheMaxSize) {
-                    System.out.println(" - One entry have to be removed : cacheSize == cacheMaxSize");
-                    String removedKey = "null";
-                    boolean search = true;
-                    Set<String> keySet = cacheUseBit.keySet();
-                    for (Iterator<String> it = keySet.iterator(); it.hasNext() && search;) {    // Looking for a (the first) key with use bit == 0
-                            String key = it.next();
-                            if(cacheUseBit.get(key) == 0) {
-                                    removedKey = key;
-                                    search = false;
-                            }
-                    }
-        
-                    // Remove the key of the cache (do not forget the use bit)
-                    if(removedKey.equals("null")) {
-                        System.out.println(" /!\\ The cache did not find an entry with the use bit at 0 /!\\ ");
-                    }
-                    else {
-                        System.out.println(" - Removed entry " + removedKey);
-                        cache.remove(removedKey);
-                        cacheUseBit.remove(removedKey);
-                        cacheSize--;
-                    }
+                catch(Exception e) {
+                    System.out.println(" /!\\ Wrong request syntax /!\\ ");
                 }
-
-                // Put the new request in cache
-                System.out.println(" - Put the instruction in cache");
-                cache.put(request, sendedSentences);
-                cacheUseBit.put(request, 1);
-                cacheSize++;
             }
         }
 
@@ -395,5 +400,6 @@ public class ServerForthread {
 /*
  * - When do we want to stop the wile loop ? 
  * - Add a pool to keep track of each thread an a function joint
+ * - Try catch bad regex
  *
  */
