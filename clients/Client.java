@@ -73,7 +73,7 @@ public class Client {
         try {
             while (!(fromUser = stdIn.readLine()).equals("exit")) {
                 if (fromUser != null) {
-                    System.out.println("Client: " + fromUser);
+                    System.out.println(" - Client: " + fromUser + "\n");
                     this.sendRequest(fromUser);
                 }
             }
@@ -218,11 +218,11 @@ public class Client {
             clientIn.close();
             clientSocket.close();
         } catch (IOException e) {
-            System.out.println("IOException closing the socket, PrintWriter and BufferedReader");
-            System.out.println(e.getMessage());
+            System.err.println(" IOException closing the socket, PrintWriter and BufferedReader");
+            System.err.println(e.getMessage());
         }
 
-        System.out.println("finised Thread in client");
+        System.out.println(" - Finised Thread in client \n");
     }
 
     /**
@@ -257,11 +257,11 @@ public class Client {
                 while (((isEmpty = fromServer.equals("")) || keepRunning()) && (c = clientIn.read()) > 0) {
                     if (c == '\n' && isEmpty) {
                         Client.this.arrivingTimes.add(Long.valueOf(0));
-                        System.out.println("Server: -------!!newline!!------");
+                        System.out.println(" - Server : ------- !! New Line !! ------ \n");
                     } else if (c == '\n') {
                         long endTime = System.nanoTime();
                         Client.this.arrivingTimes.add(endTime);
-                        System.out.println("Server: " + fromServer);
+                        System.out.println(" - Server : " + fromServer + "\n");
                         fromServer = "";
                     } else {
                         fromServer += (char) c;
@@ -270,7 +270,7 @@ public class Client {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("Stop listening the server");
+            System.out.println(" - Stop listening the server \n");
             Client.this.stopClient();
         }
     }
