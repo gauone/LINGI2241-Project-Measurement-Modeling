@@ -134,6 +134,7 @@ public class ServerForthread {
                         resetBits = true;
                     }
                     searchLine(request);
+                    System.out.println(" * Request treated (\\n)");
                     clientOut.print("\n");
                     nRequests++;
                 }
@@ -173,8 +174,9 @@ public class ServerForthread {
 
                 ArrayList<String> sendedSentences = cache.get(request);
                 for(String sendedSentence : sendedSentences) {
-                    System.out.println("   ===> Responding (from cache) \"" + sendedSentence + "\" ");
                     System.out.println("\n");
+                    System.out.println("   ===> Responding (from cache) \"" + sendedSentence + "\" ");
+                    System.out.println("        To the request : " + request);
                     clientOut.println(sendedSentence);
                     cacheUseBit.put(request, 1);
                 } 
@@ -222,7 +224,12 @@ public class ServerForthread {
                                 sendedSentences.add(returnSentence);
                                 System.out.println("\n");
                                 System.out.println("   ===> Responding (from main memory) \"" + returnSentence + "\" ");
+                                System.out.println("        To the request : " + request);
                                 clientOut.println(returnSentence);
+                            }
+                            else {
+                                System.out.println("\n");
+                                System.out.println("   ===> No match found for the request : " + request);
                             }
                         }
                     }
