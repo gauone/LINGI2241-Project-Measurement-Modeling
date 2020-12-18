@@ -46,28 +46,28 @@ public class Client {
         // This is the function called when we launch the tread by doing Thread.start().
         @Override
         public void run() {
-            String fromServer;
             try {
-                Boolean isAtEndOfResponse = true; //this boolean is use to wait for the end of the response before stopping.
-                while ( ( keepRunning() || !isAtEndOfResponse ) && (fromServer = clientIn.readLine()) != null ) {
-                    long endTime = System.nanoTime();
-                    Client.this.arrivingTimes.add(endTime);
-
-                    //we receive a \n as a end of response marker
-                    if (fromServer.equals("\n") ) {
-                        isAtEndOfResponse = true;
+                int c;
+                String fromServer = "";
+                Boolean isEmpty = false;
+                while ( ( (isEmpty = fromServer.equals("")) || keepRunning() ) && (c = clientIn.read()) > 0 ) {
+                    if ( c == '\n' && isEmpty ) {
                         Client.this.arrivingTimes.add( Long.valueOf(0) );
                         System.out.println("Server: -------!!newline!!------");
-                    } else {
+                    } else if ( c == '\n' ) {
+                        long endTime = System.nanoTime();
+                        Client.this.arrivingTimes.add(endTime);
                         System.out.println("Server: " + fromServer);
-                        isAtEndOfResponse = false;
+                        fromServer = "";
+                    } else {
+                        fromServer += (char) c;
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             System.out.println("Stop listening the server");
+            Client.this.stopClient();
         }
     }
 
@@ -93,7 +93,6 @@ public class Client {
             if (inputFromStd) {
                 sendRequestFromStd();
             }
-
 
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);
@@ -157,15 +156,13 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.stopClient();
+
+        System.out.println("closingClient " + this);
+        // Stop the server listening thread
+        this.myServerListener.doStop();
     }
 
     public void stopClient(){
-        System.out.println("closingClient " + this);
-
-        // Stop the server listening thread
-        this.myServerListener.doStop();
-
         // Compute the responses times
         ArrayList<Long> responsesTime = new ArrayList<Long>();
         Long start, stop;
@@ -185,6 +182,19 @@ public class Client {
         }
 
         // Write the response times to a file.
+        System.out.println("write response times to file ");
         MyLogger.getInstance().println(responsesTime);
+
+        try {
+			clientSocket.close();
+            clientOut.close();
+            clientIn.close();
+        } catch(IOException e) {
+            System.out.println("IOException closing the socket, PrintWriter and BufferedReader");
+            System.out.println(e.getMessage());
+        }
+        MyLogger.getInstance().closeFile();
+
+        System.out.println("finised exit ");
     }
 }

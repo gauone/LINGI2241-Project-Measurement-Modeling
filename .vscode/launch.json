@@ -1,0 +1,76 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch addWordsToRegexCorpus",
+            "request": "launch",
+            "mainClass": "regexPreprocessing.addWordsToRegexCorpus",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_7864aa72"
+        },
+        {
+            "type": "java",
+            "name": "Launch sandboxGau",
+            "request": "launch",
+            "mainClass": "sandboxGau",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_7864aa72"
+        },
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch Brouillon",
+            "request": "launch",
+            "mainClass": "Brouillon",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_7864aa72"
+        },
+        {
+            "type": "java",
+            "name": "Launch Brouillon2",
+            "request": "launch",
+            "mainClass": "Brouillon2",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_7864aa72"
+        },
+        {
+            "type": "java",
+            "name": "Launch LauncherClient",
+            "request": "launch",
+            "mainClass": "LauncherClient",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_7864aa72"
+        },
+        {
+            "type": "java",
+            "name": "Launch LauncherServer",
+            "request": "launch",
+            "mainClass": "LauncherServer",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_7864aa72"
+        },
+        {
+            "type": "java",
+            "name": "Launch CallClient",
+            "request": "launch",
+            "mainClass": "clients.CallClient",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_7864aa72"
+        },
+        {
+            "type": "java",
+            "name": "Launch ClientTest",
+            "request": "launch",
+            "mainClass": "clients.ClientTest",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_7864aa72"
+        },
+        {
+            "type": "java",
+            "name": "Launch BioInfo",
+            "request": "launch",
+            "mainClass": "BioInfo"
+        }
+    ]
+}
