@@ -67,7 +67,7 @@ public class Client {
     }
 
     public synchronized Boolean NSendEqualsNReceived(){
-        return this.sendingTimes.size() != this.arrivingTimes.size();
+        return this.sendingTimes.size() == this.arrivingTimes.size();
     }
     
     public synchronized void addToArrivalTimes(long time){
