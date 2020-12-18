@@ -51,7 +51,7 @@ public class Client {
             }
 
             launchRequests(lambda);
-
+            TimeUnit.SECONDS.sleep((long) 1000);
             // Stop the server listening thread
             this.myServerListener.doStop();
 
@@ -61,6 +61,8 @@ public class Client {
         } catch (IOException e) {
             System.err.println("Couldn't get I/O for the connection to " + hostName);
             System.exit(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
