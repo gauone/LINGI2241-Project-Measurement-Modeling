@@ -33,8 +33,15 @@ public class LauncherServer {
         /*
          * serverFort
          */
-        ServerFort serverFort = new ServerFort(portNumber);
-        serverFort.start();
-        serverFort.stop();
+        // ServerFort serverFort = new ServerFort(portNumber);
+        // serverFort.start();
+        // serverFort.stop();
+
+        /*
+         * serverNulthread
+         */
+        ServerNulthread serverNulthread = new ServerNulthread(portNumber, 2);
+        serverNulthread.start();
+        serverNulthread.stop();
     }
 }
