@@ -5,14 +5,17 @@ public class Brouillon {
 
 	public static void main(String[] args) throws IOException {
 
-                String empty = "";
-                String cr = "\n";
+        ArrayList<String> arrayList = new ArrayList<String>();
+        arrayList.add("coucou");
+        arrayList.add("aurevoir");
+        arrayList.remove(0);
+        String testGet = arrayList.remove(0);
+        String testNull = arrayList.remove(0);
 
-                System.out.println(empty);
-                System.out.println("----------------");
-                System.out.println(cr);
-                System.out.println("----------------");
+        System.out.println(arrayList);
+        System.out.println(testGet);
+        System.out.println(testNull);
 
-                System.out.println("End");
+        System.out.println("End");
 	}
 }

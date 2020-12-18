@@ -1,42 +1,44 @@
 package servers;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 
 /**
-    Write a better server than serverNul
+    Write a better server than serverNulthread
 
     This server return only the string of the line, like : 0@@@i thought that was neat => i thought that was neat
 */
-public class ServerForthread implements Runnable {
-
-    // Thread
-    protected boolean isStopped = false;
-    protected Thread runningThread = null;
+public class ServerForthread {
 
     // Port number
     int portNumber;
 
     // Socket
     ServerSocket serverSocket;
-    Socket clientSocket;
-    PrintWriter clientOut;
-    BufferedReader clientIn;
+
+    // Server
+    boolean active = true;
+
+    // Threads
+    int nMaxThreads;
+    int nThreads = 0;
 
     // Main Memory
     HashMap<Integer, ArrayList<String>> data = new HashMap<Integer, ArrayList<String>>(); // Hashmap with key : type (Integer); value : sentences (list of String)
-
-    // Cache
-    HashMap<String, ArrayList<String>> cache = new HashMap<String, ArrayList<String>>(); // Hashmap with key : request (String); value : sendedSentences (list of String)
-    HashMap<String, Integer> cacheUseBit = new HashMap<String, Integer>(); // Hashmap with key : request (String); value : usedBit (Integer)
-    int cacheMaxSize = 10; // We keep maximum the last 100 requests with their responses
-    int cacheSize = 0;      // Amount of request in the cache
-    int nReset = 3;
 
 
 
@@ -45,52 +47,19 @@ public class ServerForthread implements Runnable {
      * 
      * @param portNumber
      */
-    public ServerForthread(int portNumber) {
-		this.portNumber = portNumber;
+    public ServerForthread(int portNumber, int nMaxThreads) {
+        this.portNumber = portNumber;
+        this.nMaxThreads = nMaxThreads;
     }
 
-
-
-    /**
-     * 
-     */
-    public void run() {
-        synchronized(this) {
-            this.runningThread = Thread.currentThread();
-        }
-        openServerSocket();
-        while(!isStopped()) {
-            Socket clientSocket = null;
-            try {
-                clientSocket = this.serverSocket.accept();
-            } catch (IOException e) {
-                if(isStopped()) {
-                    System.out.println("Server Stopped.") ;
-                    return;
-                }
-                throw new RuntimeException(
-                    "Error accepting client connection", e);
-            }
-            new Thread(
-                new WorkerRunnable(
-                    clientSocket, "Multithreaded Server")
-            ).start();
-        }
-        System.out.println("Server Stopped.") ;
-    }
-
-
-
-
-
-
-
+    
+    
     /**
      * Start the simple server : 
      *    - Load the data
      *    - Open a socket
      *    - Wait far a connection
-     *    - Add the request to the queue
+     *    - Launch threads
      * 
      * @throws IOException
      */
@@ -102,41 +71,226 @@ public class ServerForthread implements Runnable {
         loadMainMemory();
         
         /*
-         * Open a socket
+         * Create a socket and accept clients
          */
         try {
-            System.out.println(" - Opening a socket and waiting for the client");
-            serverSocket = new ServerSocket(portNumber);
-            clientSocket = serverSocket.accept();
-            clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
-            clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            System.out.println(" - Socket is open !");
+            System.out.println("Creating a socket and waiting for the client");
+            serverSocket = new ServerSocket(portNumber);    // Create the socket
         } catch (IOException e) {
             System.out.println("Exception when opening the socket with the portNumber : " + portNumber);
             System.out.println(e.getMessage());
         }
-            
-        /*
-         * Read the socket (that have his own queue)
+
+        while(active) { // Keep nMaxThreads running
+            if(nThreads < nMaxThreads) {
+                Socket clientSocket = serverSocket.accept(); // Accept a client
+                Runnable brain = new Brain(clientSocket, data);
+                new Thread(brain).start();
+                incrementThreads();
+            }
+        }
+    }
+
+
+
+    private class Brain implements Runnable {
+
+        // Socket
+        Socket clientSocket;
+        PrintWriter clientOut;
+        BufferedReader clientIn;
+
+        // Main Memory
+        HashMap<Integer, ArrayList<String>> data;
+
+        // Cache
+        HashMap<String, ArrayList<String>> cache = new HashMap<String, ArrayList<String>>();    // Hashmap with key : request; value : sendedSentences
+        HashMap<String, Integer> cacheUseBit = new HashMap<String, Integer>();                  // Hashmap with key : request; value : usedBit
+        int cacheMaxSize = 10;                                                                  // We keep maximum the last 100 requests with their responses
+        int cacheSize = 0;                                                                      // Amount of request in the cache
+        int nReset = 3;                                                                         // Reset of the use bits each nReset instructions
+        int nRequests = 0;                                                                      // Amount of instructions from the last use bits reset
+        boolean resetBits = false;                                                              // Set to true when we have to reset the use bits
+
+
+        public Brain(Socket clientSocket, HashMap<Integer, ArrayList<String>> data) {
+            this.clientSocket = clientSocket;
+            this.data = data;
+        }
+
+
+        @Override
+        public void run() {
+            try {
+                System.out.println("Creating the in and out streams with a client");
+                clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
+                clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+                /*
+                 * Read the socket
+                 */
+                System.out.println("Reading the socket");
+                String request;
+                while((request = clientIn.readLine()) != null) {    // Read a request (that have the following format : "1,2,3;coucou")
+                    if(nRequests == nReset) {                       // We have to reset the use bits !
+                        resetBits = true;
+                    }
+                    searchLine(request);
+                    clientOut.print("\n");
+                    nRequests++;
+                }
+
+                System.out.println("Ending a client)");
+                stopBrain();
+
+            } catch (IOException e) {
+                System.out.println("Exception in run()");
+                System.out.println(e.getMessage());
+            }
+        }
+
+
+        /**
+         * Process a request by searching the matching line in Main memory and them back to the client
+         * 
+         * @param request
          */
-        System.out.println(" - Reading the socket");
-        int nRequests = 0;
-        String request;
-        while((request = clientIn.readLine()) != null) {    // Read a request (that have the following format : "1,2,3;coucou")
-            System.out.println("");
-            System.out.println(" - Reading a new request");
-            if(nRequests == nReset) {
-                searchLine(request, true);
+        public void searchLine(String request) {
+
+            System.out.println(" - Starting searchLine()");
+
+            /*
+             * Reset Use Bits
+             */
+            if(resetBits) {
+                cacheUseBit.replaceAll((key, value) -> 0);    // Replace all values of the HashMap by zero : Set all use bits to 0
                 nRequests = 0;
+                resetBits = false;
+            }
+
+
+            /*
+             * Search in cache
+             */
+            System.out.println(" - Search in Cache");
+
+            if(cache.containsKey(request)) {
+                System.out.println(" - It is in Cache");
+
+                ArrayList<String> sendedSentences = cache.get(request);
+                for(String sendedSentence : sendedSentences) {
+                    System.out.println("   ===> Responding (from cache) \"" + sendedSentence + "\" to the client");
+                    System.out.println("\n");
+                    clientOut.println(sendedSentence);
+                    cacheUseBit.put(request, 1);
+                } 
             }
             else {
-                searchLine(request, false);
-                nRequests++;
+                System.out.println(" - It is NOT in Cache");
+
+                /*
+                 * Getting the types and the regex of the request
+                 */
+                System.out.println(" - Getting types and regex from the request");
+
+                List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
+                String regex;                                               // String containing the regex asked by the request
+
+                String[] splittedLine = request.split(";", 2);              // Split to have the tags (String) and the regex
+
+                if(splittedLine[0].equals("")) {                            // If the request do not contain a type, we are looking for each of them
+                    splittedLine[0] = "0,1,2,3,4,5";
+                }
+
+                String[] stringTypes = splittedLine[0].split(",");
+                for(int i = 0; i < stringTypes.length; i++) {
+                        requestTypes.add(Integer.valueOf(stringTypes[i]));
+                }
+
+                regex = splittedLine[1].toLowerCase(); 
+
+
+                /*
+                 * Search of the tags & regex into the Main memory
+                 *    requestTypes = [1, 2, 3]
+                 *    regex = "second"
+                 */
+                System.out.println(" - Linear search in Main memory (hashMap)");
+
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher;
+                ArrayList<String> sendedSentences = new ArrayList<String>();    // List of the string already sended for ONE request (to avoid duplicates)
+
+                for(int requestType : requestTypes) {
+                    ArrayList<String> sentences = data.get(requestType);
+                    for(int i = 0; i < sentences.size(); i++) {
+                        String returnSentence = sentences.get(i);
+                        matcher = pattern.matcher(returnSentence);
+                        if( matcher.find() && !sendedSentences.contains(returnSentence) ) {     // If we have a match and we do not have send it already (fot this request)
+                            sendedSentences.add(returnSentence);
+                            System.out.println("\n");
+                            System.out.println("   ===> Responding (from main memory) \"" + returnSentence + "\" to the client");
+                            clientOut.println(returnSentence);
+                        }
+                    }
+                }
+                
+
+                /*
+                 * Put the request in cache
+                 */
+                System.out.println(" - Handle the instruction in cache");
+
+                if(cacheSize == cacheMaxSize) {
+                    System.out.println(" - One entry have to be removed : cacheSize == cacheMaxSize");
+                    String removedKey = "null";
+                    boolean search = true;
+                    Set<String> keySet = cacheUseBit.keySet();
+                    for (Iterator<String> it = keySet.iterator(); it.hasNext() && search;) {    // Looking for a (the first) key with use bit == 0
+                            String key = it.next();
+                            if(cacheUseBit.get(key) == 0) {
+                                    removedKey = key;
+                                    search = false;
+                            }
+                    }
+        
+                    // Remove the key of the cache (do not forget the use bit)
+                    if(removedKey.equals("null")) {
+                        System.out.println(" /!\\ The cache did not find an entry with the use bit at 0 /!\\ ");
+                    }
+                    else {
+                        System.out.println(" - Removed entry " + removedKey);
+                        cache.remove(removedKey);
+                        cacheUseBit.remove(removedKey);
+                        cacheSize--;
+                    }
+                }
+
+                // Put the new request in cache
+                System.out.println(" - Put the instruction in cache");
+                cache.put(request, sendedSentences);
+                cacheUseBit.put(request, 1);
+                cacheSize++;
             }
-            clientOut.print("\n");
         }
-        System.out.println(" - Ending start()");
-    }
+
+
+        /**
+         * Stop the brain
+         */
+        public void stopBrain() {
+            System.out.println("Stopping the brain");
+            try {
+                clientOut.close();
+                clientIn.close();
+                clientSocket.close();
+                decrementThreads();
+            } catch(IOException e) {
+                System.out.println("IOException at Server.stop()");
+                System.out.println(e.getMessage());
+            }
+        }
+    }  
 
 
 
@@ -201,134 +355,19 @@ public class ServerForthread implements Runnable {
 
 
     /**
-     * Process a request by searching the matching line in Main memory and them back to the client
-     * 
-     * @param request
+     * Decrement the amount of threads running
      */
-    public void searchLine(String request, boolean resetBits) {
-
-        System.out.println(" - Starting searchLine()");
-
-        /*
-         * Reset Use Bits
-         */
-        if(resetBits) {
-            cacheUseBit.replaceAll((key, value) -> 0);    // Replace all values of the HashMap by zero : Set all use bits to 0
-        }
-
-
-        /*
-         * Search in cache
-         */
-        System.out.println(" - Search in Cache");
-
-        if(cache.containsKey(request)) {
-            System.out.println(" - It is in Cache");
-
-            ArrayList<String> sendedSentences = cache.get(request);
-            for(String sendedSentence : sendedSentences) {
-                System.out.println("   ===> Responding (from cache) \"" + sendedSentence + "\" to the client");
-                System.out.println("\n");
-                clientOut.println(sendedSentence);
-                cacheUseBit.put(request, 1);
-            } 
-        }
-        else {
-            System.out.println(" - It is NOT in Cache");
-
-            /*
-             * Getting the types and the regex of the request
-             */
-            System.out.println(" - Getting types and regex from the request");
-
-            List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
-            String regex;                                               // String containing the regex asked by the request
-
-            String[] splittedLine = request.split(";", 2);              // Split to have the tags (String) and the regex
-
-            if(splittedLine[0].equals("")) {                            // If the request do not contain a type, we are looking for each of them
-                splittedLine[0] = "0,1,2,3,4,5";
-            }
-
-            String[] stringTypes = splittedLine[0].split(",");
-            for(int i = 0; i < stringTypes.length; i++) {
-                    requestTypes.add(Integer.valueOf(stringTypes[i]));
-            }
-
-            regex = splittedLine[1].toLowerCase(); 
-
-
-            /*
-             * Search of the tags & regex into the Main memory
-             *    requestTypes = [1, 2, 3]
-             *    regex = "second"
-             */
-            System.out.println(" - Linear search in Main memory (hashMap)");
-
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher;
-            ArrayList<String> sendedSentences = new ArrayList<String>();    // List of the string already sended for ONE request (to avoid duplicates)
-
-            for(int requestType : requestTypes) {
-                ArrayList<String> sentences = data.get(requestType);
-                for(int i = 0; i < sentences.size(); i++) {
-                    String returnSentence = sentences.get(i);
-                    matcher = pattern.matcher(returnSentence);
-                    if( matcher.find() && !sendedSentences.contains(returnSentence) ) {     // If we have a match and we do not have send it already (fot this request)
-                        sendedSentences.add(returnSentence);
-                        System.out.println("\n");
-                        System.out.println("   ===> Responding (from main memory) \"" + returnSentence + "\" to the client");
-                        clientOut.println(returnSentence);
-                    }
-                }
-            }
-            
-
-            /*
-             * Put the request in cache
-             */
-            System.out.println(" - Handle the instruction in cache");
-
-            if(cacheSize == cacheMaxSize) {
-                System.out.println(" - One entry have to be removed : cacheSize == cacheMaxSize");
-                String removedKey = "null";
-                boolean search = true;
-                Set<String> keySet = cacheUseBit.keySet();
-                for (Iterator<String> it = keySet.iterator(); it.hasNext() && search;) {    // Looking for a (the first) key with use bit == 0
-                        String key = it.next();
-                        if(cacheUseBit.get(key) == 0) {
-                                removedKey = key;
-                                search = false;
-                        }
-                }
-    
-                // Remove the key of the cache (do not forget the use bit)
-                if(removedKey.equals("null")) {
-                    System.out.println(" /!\\ The cache did not find an entry with the use bit at 0 /!\\ ");
-                }
-                else {
-                    System.out.println(" - Removed entry " + removedKey);
-                    cache.remove(removedKey);
-                    cacheUseBit.remove(removedKey);
-                    cacheSize--;
-                }
-            }
-
-            // Put the new request in cache
-            System.out.println(" - Put the instruction in cache");
-            cache.put(request, sendedSentences);
-            cacheUseBit.put(request, 1);
-            cacheSize++;
-        }
+    public synchronized void decrementThreads() {
+        nThreads--;
     }
 
 
 
     /**
-     * Return true if this server is stopped ()
+     * Increment the amount of threads running
      */
-    private synchronized boolean isStopped() {
-        return this.isStopped;
+    public synchronized void incrementThreads() {
+        nThreads++;
     }
 
 
@@ -336,14 +375,11 @@ public class ServerForthread implements Runnable {
     /**
      * Stop the server and close the streams
      */
-    public synchronized void stop() {
-        System.out.println(" - Stopping the server");
-        isStopped = true;
+    public void stop() {
+        System.out.println("Stopping the server");
+        active = false;
         try {
 			serverSocket.close();
-			clientSocket.close();
-            clientOut.close();
-            clientIn.close();
         } catch(IOException e) {
             System.out.println("IOException at Server.stop()");
             System.out.println(e.getMessage());
@@ -353,14 +389,11 @@ public class ServerForthread implements Runnable {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Modifications
+//  NOTES
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////
 /*
- * - Main Memory as a Hashmap (key = type; value = sentences)
- * - Deleting the requestAllTypes boolean
- * - Add buffer off sended request to avoid duplicates with differents types (So preprocessing is not needed)
- * 
- * - Keep the most recent request ? 
- * - Multithread ?
+ * - When do we want to stop the wile loop ? 
+ * - Add a pool to keep track of each thread an a function joint
+ *
  */
