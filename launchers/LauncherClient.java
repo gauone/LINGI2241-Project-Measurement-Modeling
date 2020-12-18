@@ -8,7 +8,7 @@ public class LauncherClient {
 
         Double lambda = 5.0;
         int portNumber = 3900;
-        int nClients = 10;
+        int nClients = 2;
         Thread[] threads = new Thread[nClients];
 
         for (int i = 0; i < nClients; i++) {

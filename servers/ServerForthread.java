@@ -64,7 +64,7 @@ public class ServerForthread {
      * @throws IOException
      */
     public void start() throws IOException {
-
+        System.out.println(" -- Starting the server");
         /*
          * Load the data into Main memory
          */
@@ -74,11 +74,10 @@ public class ServerForthread {
          * Create a socket and accept clients
          */
         try {
-            System.out.println("Creating a socket and waiting for the client");
             serverSocket = new ServerSocket(portNumber);    // Create the socket
         } catch (IOException e) {
-            System.out.println("Exception when opening the socket with the portNumber : " + portNumber);
-            System.out.println(e.getMessage());
+            System.out.println("/!\\Exception when opening the socket with the portNumber : " + portNumber + " /!\\");
+            System.err.println(e.getMessage());
         }
 
         while(active) { // Keep nMaxThreads running
@@ -121,15 +120,14 @@ public class ServerForthread {
 
         @Override
         public void run() {
+            System.out.println(" * Beginning of a thread");
             try {
-                System.out.println("Creating the in and out streams with a client");
                 clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
                 clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
                 /*
                  * Read the socket
                  */
-                System.out.println("Reading the socket");
                 String request;
                 while((request = clientIn.readLine()) != null) {    // Read a request (that have the following format : "1,2,3;coucou")
                     if(nRequests == nReset) {                       // We have to reset the use bits !
@@ -139,12 +137,9 @@ public class ServerForthread {
                     clientOut.print("\n");
                     nRequests++;
                 }
-
-                System.out.println("Ending a client)");
                 stopBrain();
-
             } catch (IOException e) {
-                System.out.println("Exception in run()");
+                System.out.println("/!\\ Exception in run() /!\\");
                 System.out.println(e.getMessage());
             }
         }
@@ -156,8 +151,7 @@ public class ServerForthread {
          * @param request
          */
         public void searchLine(String request) {
-
-            System.out.println(" - Starting searchLine()");
+            System.out.println(" * New request => searchLine()");
 
             /*
              * Reset Use Bits
@@ -172,26 +166,25 @@ public class ServerForthread {
             /*
              * Search in cache
              */
-            System.out.println(" - Search in Cache");
+            System.out.println(" * Search in Cache");
 
             if(cache.containsKey(request)) {
-                System.out.println(" - It is in Cache");
+                System.out.println(" -- It is in Cache");
 
                 ArrayList<String> sendedSentences = cache.get(request);
                 for(String sendedSentence : sendedSentences) {
-                    System.out.println("   ===> Responding (from cache) \"" + sendedSentence + "\" to the client");
+                    System.out.println("   ===> Responding (from cache) \"" + sendedSentence + "\" ");
                     System.out.println("\n");
                     clientOut.println(sendedSentence);
                     cacheUseBit.put(request, 1);
                 } 
             }
             else {
-                System.out.println(" - It is NOT in Cache");
+                System.out.println(" * It is NOT in Cache");
 
                 /*
                  * Getting the types and the regex of the request
                  */
-                System.out.println(" - Getting types and regex from the request");
 
                 try {
                     List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
@@ -212,12 +205,10 @@ public class ServerForthread {
 
 
                     /*
-                    * Search of the tags & regex into the Main memory
-                    *    requestTypes = [1, 2, 3]
-                    *    regex = "second"
-                    */
-                    System.out.println(" - Linear search in Main memory (hashMap)");
-
+                     * Search of the tags & regex into the Main memory
+                     *    requestTypes = [1, 2, 3]
+                     *    regex = "second"
+                     */
                     Pattern pattern = Pattern.compile(regex);
                     Matcher matcher;
                     ArrayList<String> sendedSentences = new ArrayList<String>();    // List of the string already sended for ONE request (to avoid duplicates)
@@ -230,7 +221,7 @@ public class ServerForthread {
                             if( matcher.find() && !sendedSentences.contains(returnSentence) ) {     // If we have a match and we do not have send it already (fot this request)
                                 sendedSentences.add(returnSentence);
                                 System.out.println("\n");
-                                System.out.println("   ===> Responding (from main memory) \"" + returnSentence + "\" to the client");
+                                System.out.println("   ===> Responding (from main memory) \"" + returnSentence + "\" ");
                                 clientOut.println(returnSentence);
                             }
                         }
@@ -238,12 +229,9 @@ public class ServerForthread {
                     
 
                     /*
-                    * Put the request in cache
-                    */
-                    System.out.println(" - Handle the instruction in cache");
-
+                     * Put the request in cache
+                     */
                     if(cacheSize == cacheMaxSize) {
-                        System.out.println(" - One entry have to be removed : cacheSize == cacheMaxSize");
                         String removedKey = "null";
                         boolean search = true;
                         Set<String> keySet = cacheUseBit.keySet();
@@ -257,10 +245,9 @@ public class ServerForthread {
             
                         // Remove the key of the cache (do not forget the use bit)
                         if(removedKey.equals("null")) {
-                            System.out.println(" /!\\ The cache did not find an entry with the use bit at 0 /!\\ ");
+                            System.out.println("/!\\ The cache did not find an entry with the use bit at 0 /!\\");
                         }
                         else {
-                            System.out.println(" - Removed entry " + removedKey);
                             cache.remove(removedKey);
                             cacheUseBit.remove(removedKey);
                             cacheSize--;
@@ -268,13 +255,12 @@ public class ServerForthread {
                     }
 
                     // Put the new request in cache
-                    System.out.println(" - Put the instruction in cache");
                     cache.put(request, sendedSentences);
                     cacheUseBit.put(request, 1);
                     cacheSize++;
                 }
                 catch(Exception e) {
-                    System.out.println(" /!\\ Wrong request syntax /!\\ ");
+                    System.out.println("/!\\ Wrong request syntax /!\\");
                 }
             }
         }
@@ -284,14 +270,14 @@ public class ServerForthread {
          * Stop the brain
          */
         public void stopBrain() {
-            System.out.println("Stopping the brain");
+            System.out.println(" * Stopping the brain");
             try {
                 clientOut.close();
                 clientIn.close();
                 clientSocket.close();
                 decrementThreads();
             } catch(IOException e) {
-                System.out.println("IOException at Server.stop()");
+                System.out.println("/!\\ IOException at Server.stop() /!\\");
                 System.out.println(e.getMessage());
             }
         }
@@ -305,8 +291,7 @@ public class ServerForthread {
      * @throws IOException
      */
     public void loadMainMemory() throws IOException {
-
-        System.out.println(" - Starting LoadMemory()");
+        System.out.println(" -- Loading Main memory");
 
         ArrayList<String> sentences0 = new ArrayList<String>();   // List of Strings containing the Strings per line : 2.442.237
         ArrayList<String> sentences1 = new ArrayList<String>();   // List of Strings containing the Strings per line : 2.442.237
@@ -381,12 +366,12 @@ public class ServerForthread {
      * Stop the server and close the streams
      */
     public void stop() {
-        System.out.println("Stopping the server");
+        System.out.println(" -- Stopping the server");
         active = false;
         try {
 			serverSocket.close();
         } catch(IOException e) {
-            System.out.println("IOException at Server.stop()");
+            System.out.println("/!\\ IOException at Server.stop() /!\\");
             System.out.println(e.getMessage());
         }
     }

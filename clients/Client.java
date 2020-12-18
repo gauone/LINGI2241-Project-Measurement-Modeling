@@ -128,11 +128,14 @@ public class Client {
     }
 
     public void launchRequests(double lambda) {
-        int N = rand.nextInt(500);
+        // int N = rand.nextInt(500);
+        int N = 1;
         try {
             for (int i = 0; i < N; i++) {
                 TimeUnit.SECONDS.sleep((long)getRandomExponential(lambda));
-                sendRequest(generateRequest());
+                String request = generateRequest();
+                System.out.println(" - Client send the request : " + request + "\n");
+                sendRequest(request);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
