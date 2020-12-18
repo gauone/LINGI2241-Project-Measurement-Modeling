@@ -51,7 +51,9 @@ public class Client {
             }
 
             launchRequests(lambda);
-            TimeUnit.SECONDS.sleep((long) 1000);
+            
+            while ( !NSendEqualsNReceived() ) {}
+
             // Stop the server listening thread
             this.myServerListener.doStop();
 
@@ -61,9 +63,15 @@ public class Client {
         } catch (IOException e) {
             System.err.println("Couldn't get I/O for the connection to " + hostName);
             System.exit(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
+    }
+
+    public synchronized Boolean NSendEqualsNReceived(){
+        return this.sendingTimes.size() != this.arrivingTimes.size();
+    }
+    
+    public synchronized void addToArrivalTimes(long time){
+        this.arrivingTimes.add(time);
     }
 
     /**
@@ -200,19 +208,10 @@ public class Client {
         // Compute the responses times
         ArrayList<Long> responsesTime = new ArrayList<Long>();
         Long start, stop;
-        int indexArrival = 0;
         for (int i = 0; i < this.sendingTimes.size(); i++) {
             start = this.sendingTimes.get(i);
-            stop = this.arrivingTimes.get(indexArrival);
-            while ((!stop.equals(Long.valueOf(0))) && indexArrival <= this.arrivingTimes.size()) {
-                responsesTime.add(stop - start);
-                indexArrival++;
-                stop = this.arrivingTimes.get(indexArrival);
-            }
-            responsesTime.add(Long.valueOf(0));
-            if (indexArrival < arrivingTimes.size()) {
-                indexArrival = indexArrival + 1;
-            }
+            stop = this.arrivingTimes.get(i);
+            responsesTime.add(stop - start);            
         }
 
         // Write the response times to a file.
@@ -247,8 +246,6 @@ public class Client {
 
         // method to look if doStop is at false
         private synchronized boolean keepRunning() {
-            // Boolean atEndOfResponse =
-            // arrivingTimes.get(arrivingTimes.size()).equals(Long.valueOf(0));
             return this.doStop == false;// && !atEndOfResponse;
         }
 
@@ -261,11 +258,10 @@ public class Client {
                 Boolean isEmpty = false;
                 while (((isEmpty = fromServer.equals("")) || keepRunning()) && (c = clientIn.read()) > 0) {
                     if (c == '\n' && isEmpty) {
-                        Client.this.arrivingTimes.add(Long.valueOf(0));
+                        long endTime = System.nanoTime();
+                        Client.this.addToArrivalTimes(endTime);
                         System.out.println(" - Server : ------- !! New Line !! ------ \n");
                     } else if (c == '\n') {
-                        long endTime = System.nanoTime();
-                        Client.this.arrivingTimes.add(endTime);
                         System.out.println(" - Server : " + fromServer + "\n");
                         fromServer = "";
                     } else {
