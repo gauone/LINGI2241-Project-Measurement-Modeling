@@ -14,7 +14,7 @@ public class LauncherClient {
         for (int i = 0; i < nClients; i++) {
             threads[i] = new Thread(() -> {
                 try {
-                    Client client = new Client("localhost", portNumber, true, lambda);
+                    new Client("localhost", portNumber, false, lambda);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                     System.exit(1);

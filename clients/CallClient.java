@@ -11,6 +11,6 @@ public class CallClient {
 
         String hostName = args[0];
         int portNumber = Integer.parseInt(args[1]);
-        Client myClient =  new Client(hostName, portNumber, true);
+        Client myClient =  new Client(hostName, portNumber, true, 5.5);
     }
 }
