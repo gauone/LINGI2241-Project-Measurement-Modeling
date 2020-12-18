@@ -1,11 +1,12 @@
 package launchers;
 
 import clients.Client;
+import logger.MyLogger;
 
 public class LauncherClient {
     public static void main(String[] args) {
 
-        int lambda;
+        Double lambda = 5.0;
         int portNumber = 3900;
         int nClients = 50;
         Thread[] threads = new Thread[nClients];
@@ -29,5 +30,6 @@ public class LauncherClient {
                 System.exit(1);
             }
         }
+        MyLogger.getInstance().closeFile();
     }
 }
