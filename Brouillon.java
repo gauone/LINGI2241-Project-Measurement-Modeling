@@ -6,12 +6,10 @@ import java.util.*;
 public class Brouillon {
 
 	public static void main(String[] args) throws IOException {
-
-        String request = generateRequest();
-
-        System.out.println(request);
-
-        System.out.println("End");
+        for(int i = 0; i < 500; i++) {
+            String request = generateRequest();
+            System.out.println("Request #" + i + " : " + request);
+        }
     }
 
     public static String generateRequest() throws IOException {
