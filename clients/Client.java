@@ -52,7 +52,7 @@ public class Client {
 
             launchRequests(lambda);
             
-            while ( !NSendEqualsNReceived() ) {}
+            while (!NSendEqualsNReceived()) {}
 
             // Stop the server listening thread
             this.myServerListener.doStop();
@@ -137,7 +137,7 @@ public class Client {
 
     public void launchRequests(double lambda) {
         //int N = rand.nextInt(100)+1;
-        int N = 5;
+        int N = 2;
         try {
             for (int i = 0; i < N; i++) {
                 TimeUnit.SECONDS.sleep((long)getRandomExponential(lambda));
@@ -255,7 +255,7 @@ public class Client {
             try {
                 int c;
                 String fromServer = "";
-                while (keepRunning() && (c = clientIn.read()) > -1) {
+                while (keepRunning() && (c = clientIn.read()) != -1) {
                     if (c == '\n' && fromServer.equals("")) {
                         Client.this.addToArrivalTimes(System.nanoTime());
                         System.out.println(" - Server : --------------------- !! New Line !! -------------------- \n");
