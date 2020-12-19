@@ -8,10 +8,10 @@ public class LauncherClient {
 
         Double lambda = 5.0;
         int portNumber = 3900;
-        int nClients = 1;
+        int nClients = 50;
         Thread[] threads = new Thread[nClients];
 
-        for (int i = 0; i < nClients-1; i++) {
+        for (int i = 0; i < nClients; i++) {
             threads[i] = new Thread(() -> {
                 try {
                     new Client("localhost", portNumber, false, lambda);
