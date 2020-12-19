@@ -136,8 +136,8 @@ public class Client {
     }
 
     public void launchRequests(double lambda) {
-        int N = rand.nextInt(100)+1;
-        // int N = 3;
+        //int N = rand.nextInt(100)+1;
+        int N = 5;
         try {
             for (int i = 0; i < N; i++) {
                 TimeUnit.SECONDS.sleep((long)getRandomExponential(lambda));
@@ -255,8 +255,8 @@ public class Client {
             try {
                 int c;
                 String fromServer = "";
-                while (keepRunning() && (c = clientIn.read()) > 0) {
-                    if (c == 'Ø' && fromServer.equals("")) {
+                while (keepRunning() && (c = clientIn.read()) > -1) {
+                    if (c == '\n' && fromServer.equals("")) {
                         Client.this.addToArrivalTimes(System.nanoTime());
                         System.out.println(" - Server : --------------------- !! New Line !! -------------------- \n");
                     } else if (c == '\n') {
