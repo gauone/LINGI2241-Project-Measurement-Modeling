@@ -256,7 +256,7 @@ public class Client {
                 int c;
                 String fromServer = "";
                 while (keepRunning() && (c = clientIn.read()) > 0) {
-                    if (c == '\n' && fromServer.equals("")) {
+                    if (c == 'Ø' && fromServer.equals("")) {
                         Client.this.addToArrivalTimes(System.nanoTime());
                         System.out.println(" - Server : ------- !! New Line !! ------ \n");
                     } else if (c == '\n') {
