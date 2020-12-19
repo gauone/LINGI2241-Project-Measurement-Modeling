@@ -134,8 +134,10 @@ public class ServerForthread {
                         resetBits = true;
                     }
                     searchLine(request);
+                    System.out.println("\n");
                     System.out.println(" * Request treated (\\n)");
-                    clientOut.print("\n");
+                    clientOut.print("Ø");
+                    System.out.println("\n");
                     nRequests++;
                 }
                 stopBrain();
@@ -214,24 +216,25 @@ public class ServerForthread {
                     Pattern pattern = Pattern.compile(regex);
                     Matcher matcher;
                     ArrayList<String> sendedSentences = new ArrayList<String>();    // List of the string already sended for ONE request (to avoid duplicates)
-
+                    boolean matched = false;
                     for(int requestType : requestTypes) {
                         ArrayList<String> sentences = data.get(requestType);
                         for(int i = 0; i < sentences.size(); i++) {
                             String returnSentence = sentences.get(i);
                             matcher = pattern.matcher(returnSentence);
-                            if( matcher.find() && !sendedSentences.contains(returnSentence) ) {     // If we have a match and we do not have send it already (fot this request)
+                            if( (matcher.find()) && (!sendedSentences.contains(returnSentence)) ) { // If we have a match and we do not have send it already (fot this request)
+                                matched = true;
                                 sendedSentences.add(returnSentence);
                                 System.out.println("\n");
                                 System.out.println("   ===> Responding (from main memory) \"" + returnSentence + "\" ");
                                 System.out.println("        To the request : " + request);
                                 clientOut.println(returnSentence);
                             }
-                            else {
-                                System.out.println("\n");
-                                System.out.println("   ===> No match found for the request : " + request);
-                            }
                         }
+                    }
+                    if(!matched) {
+                        System.out.println("\n");
+                        System.out.println("   ===> No match found for the request : " + request);
                     }
                     
 

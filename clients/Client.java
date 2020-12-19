@@ -58,10 +58,10 @@ public class Client {
             this.myServerListener.doStop();
 
         } catch (UnknownHostException e) {
-            System.err.println("Don't know about host " + hostName);
+            System.out.println("Don't know about host " + hostName);
             System.exit(1);
         } catch (IOException e) {
-            System.err.println("Couldn't get I/O for the connection to " + hostName);
+            System.out.println("Couldn't get I/O for the connection to " + hostName);
             System.exit(1);
         }
     }
@@ -136,8 +136,8 @@ public class Client {
     }
 
     public void launchRequests(double lambda) {
-        // int N = rand.nextInt(500)+1;
-        int N = 1;
+        int N = rand.nextInt(100)+1;
+        // int N = 3;
         try {
             for (int i = 0; i < N; i++) {
                 TimeUnit.SECONDS.sleep((long)getRandomExponential(lambda));
@@ -222,8 +222,8 @@ public class Client {
             clientIn.close();
             clientSocket.close();
         } catch (IOException e) {
-            System.err.println(" IOException closing the socket, PrintWriter and BufferedReader");
-            System.err.println(e.getMessage());
+            System.out.println(" IOException closing the socket, PrintWriter and BufferedReader");
+            System.out.println(e.getMessage());
         }
 
         System.out.println(" - Finised Thread in client \n");
@@ -258,7 +258,7 @@ public class Client {
                 while (keepRunning() && (c = clientIn.read()) > 0) {
                     if (c == '\n' && fromServer.equals("")) {
                         Client.this.addToArrivalTimes(System.nanoTime());
-                        System.out.println(" - Server : ------- !! New Line !! ------ \n");
+                        System.out.println(" - Server : --------------------- !! New Line !! -------------------- \n");
                     } else if (c == '\n') {
                         System.out.println(" - Server : " + fromServer + "\n");
                         fromServer = "";
