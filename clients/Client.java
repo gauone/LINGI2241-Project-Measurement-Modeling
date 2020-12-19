@@ -23,7 +23,6 @@ public class Client {
     protected ArrayList<Long> sendingTimes = new ArrayList<Long>();
     protected ArrayList<Long> arrivingTimes = new ArrayList<Long>();
 
-    ServerListener myServerListener;
     Random rand = new Random();
 
     /**
@@ -35,115 +34,49 @@ public class Client {
      * @param inputFromStd a (Boolean) telling if the some requests are to be
      *                     listened from std.
      */
-    public Client(String hostName, int portNumber, Boolean inputFromStd, Double lambda) {
+    public Client(String hostName, int portNumber, Double lambda) {
         try {
             clientSocket = new Socket(hostName, portNumber);
             clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
             clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-            this.myServerListener = new ServerListener();
-            Thread thread = new Thread(this.myServerListener);
-            thread.start();
-
-            // if some requests are to be read from std
-            if (inputFromStd) {
-                sendRequestFromStd();
-            }
-
-            launchRequests(lambda);
             
-            while (!NSendEqualsNReceived()) {}
+            //int N = rand.nextInt(100)+1;
+            int N = 2;
 
-            // Stop the server listening thread
-            this.myServerListener.doStop();
-
+            Thread sender = new Thread(() -> { launchRequests(lambda, N);});
+            sender.start();
+            
+            
+            int received = 0;
+            String fromServer;
+            while ( ((fromServer = clientIn.readLine()) != null) && received < N ) {
+                System.out.println(" - Server: " + fromServer);
+                if (fromServer.equals("")) {
+                    System.out.println(" - Server: ------!!NewLine!!------");
+                    received++;
+                }
+            }
+            
+            sender.join();
+            stopClient();
         } catch (UnknownHostException e) {
             System.out.println("Don't know about host " + hostName);
             System.exit(1);
         } catch (IOException e) {
             System.out.println("Couldn't get I/O for the connection to " + hostName);
             System.exit(1);
-        }
+        } catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     }
 
-    public synchronized Boolean NSendEqualsNReceived(){
-        return this.sendingTimes.size() == this.arrivingTimes.size();
-    }
-    
-    public synchronized void addToArrivalTimes(long time){
-        this.arrivingTimes.add(time);
-    }
-
-    /**
-     * Listen for requests from std. Those should be of the form <types>;<regex>
-     */
-    public void sendRequestFromStd() {
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-        String fromUser;
-        try {
-            while (!(fromUser = stdIn.readLine()).equals("exit")) {
-                if (fromUser != null) {
-                    System.out.println(" - Client: " + fromUser + "\n");
-                    this.sendRequest(fromUser);
-                }
-            }
-            stdIn.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Send a request to the serveur. The request is of the form: <types>;<regex>
-     * 
-     * @param types (String) a comma-separated list of integers without spaces
-     *              between the elements of the list
-     * @param regex (String) a string containing a regular expression
-     */
-    public synchronized void sendRequest(String types, String regex) {
-        long startTime = System.nanoTime();
-        sendingTimes.add(startTime);
-        clientOut.println(types + ";" + regex);
-    }
-
-    /**
-     * Send a request to the serveur. The request is of the form: String
-     * <types>;<regex> e.g.: "1,2,3,4;Coucou"
-     * 
-     * @param types (List<String>) a comma-separated list of integers
-     * @param regex (String) a string containing a regular expression
-     */
-    public synchronized void sendRequest(List<Integer> types, String regex) {
-        String typesString = types.stream().map(n -> String.valueOf(n)).collect(Collectors.joining(",")); // line from https://www.geeksforgeeks.org/java-8-streams-collectors-joining-method-with-examples/
-        long startTime = System.nanoTime();
-        this.sendingTimes.add(startTime);
-        this.clientOut.println(typesString + ";" + regex);
-    }
-
-    /**
-     * Send a request to the serveur.
-     * 
-     * @param request a (String) of type <types>;<regex>
-     */
-    public synchronized void sendRequest(String request) {
-        long startTime = System.nanoTime();
-        this.sendingTimes.add(startTime);
-        this.clientOut.println(request);
-    }
-
-    public double getRandomExponential(double lambda) {
-        return Math.log(1 - rand.nextDouble()) / (-lambda);
-    }
-
-    public void launchRequests(double lambda) {
-        //int N = rand.nextInt(100)+1;
-        int N = 2;
+    public void launchRequests(double lambda, int N) {
         try {
             for (int i = 0; i < N; i++) {
                 TimeUnit.SECONDS.sleep((long)getRandomExponential(lambda));
                 String request = generateRequest();
-                System.out.println(" - Client send the request : " + request + "\n");
                 sendRequest(request);
+                System.out.println(" - Client send the request : " + request + "\n");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -204,6 +137,21 @@ public class Client {
         return str.substring(0, p) + str.substring(p + 1);  
     }
 
+    /**
+     * Send a request to the serveur.
+     * 
+     * @param request a (String) of type <types>;<regex>
+     */
+    public synchronized void sendRequest(String request) {
+        long startTime = System.nanoTime();
+        this.sendingTimes.add(startTime);
+        this.clientOut.println(request);
+    }
+
+    public double getRandomExponential(double lambda) {
+        return Math.log(1 - rand.nextDouble()) / (-lambda);
+    }
+
     public void stopClient() {
         // Compute the responses times
         ArrayList<Long> responsesTime = new ArrayList<Long>();
@@ -214,7 +162,6 @@ public class Client {
             responsesTime.add(stop - start);            
         }
 
-        // Write the response times to a file.
         MyLogger.getInstance().println(responsesTime);
 
         try {
@@ -225,52 +172,6 @@ public class Client {
             System.out.println(" IOException closing the socket, PrintWriter and BufferedReader");
             System.out.println(e.getMessage());
         }
-
         System.out.println(" - Finised Thread in client \n");
-    }
-
-    /**
-     * Inner class listening on the socket's server
-     * 
-     * Copyright: Stopping inmplementation from
-     * http://tutorials.jenkov.com/java-concurrency/creating-and-starting-threads.html
-     */
-    private class ServerListener implements Runnable {
-        // this boolean is set to true when the thread should stop
-        private boolean doStop = false;
-
-        // method to call from outside of the thread to stop the thread
-        public synchronized void doStop() {
-            this.doStop = true;
-        }
-
-        // method to look if doStop is at false
-        private synchronized boolean keepRunning() {
-            return this.doStop == false;// && !atEndOfResponse;
-        }
-
-        // This is the function called when we launch the tread by doing Thread.start().
-        @Override
-        public void run() {
-            try {
-                int c;
-                String fromServer = "";
-                while (keepRunning() && (c = clientIn.read()) != -1) {
-                    if (c == '\n' && fromServer.equals("")) {
-                        Client.this.addToArrivalTimes(System.nanoTime());
-                        System.out.println(" - Server : --------------------- !! New Line !! -------------------- \n");
-                    } else if (c == '\n') {
-                        System.out.println(" - Server : " + fromServer + "\n");
-                        fromServer = "";
-                    } else {
-                        fromServer += (char) c;
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println(" - Stop listening the server \n");
-            Client.this.stopClient();
-        }
     }
 }
