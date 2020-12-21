@@ -12,13 +12,7 @@ import java.util.regex.Pattern;
     Write a simple server that accepts requests from a client through the network.
     The server open a socket on a certain TCP port and wait for incoming requests from the client.
 
-    This command starts the server program ServerNul so that it listens on TCP port 4444 : 
-    java ServerNul 4444
-
     Inspired from "The Knock Knock Server" : https://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html
-
-    This server return the whole line, like : 0@@@i thought that was neat.
-    I think we might olny return the string... 
 */
 public class ServerNulthread {
 

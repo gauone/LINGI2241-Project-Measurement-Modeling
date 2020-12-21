@@ -49,7 +49,7 @@ public class LauncherServer {
         // serverNulthread.stop();
 
         /*
-         * serverNulthread
+         * serverForthread
          */
         ServerForthread serverForthread = new ServerForthread(portNumber, 10);
         Thread serverThread = new Thread(() -> {
