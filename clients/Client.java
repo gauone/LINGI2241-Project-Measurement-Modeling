@@ -38,7 +38,7 @@ public class Client {
             clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             
             int N = rand.nextInt(100)+1;
-            System.out.println(" - " + this + " going to launch" + String.valueOf(N) + " requests.");
+            System.out.println(" - " + this + " going to launch " + String.valueOf(N) + " requests.");
 
             Thread sender = new Thread(() -> { launchRequests(lambda, N);});
             sender.start();

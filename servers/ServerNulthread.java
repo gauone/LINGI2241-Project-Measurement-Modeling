@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 
 
@@ -80,7 +81,7 @@ public class ServerNulthread {
             System.out.println(e.getMessage());
         }
 
-        while(active) { // Keep nMaxThreads running
+        while(getActive()) { // Keep nMaxThreads running
             if(nThreads < nMaxThreads) {
                 Socket clientSocket = serverSocket.accept(); // Accept a client
                 Runnable brain = new Brain(clientSocket, dataTypes, dataSentences);
@@ -125,7 +126,7 @@ public class ServerNulthread {
                 String request;
                 while((request = clientIn.readLine()) != null) {    // Read a request (that have the following format : "1,2,3;coucou")
                     searchLine(request);
-                    clientOut.print("\n");
+                    clientOut.println("\n");
                 }
 
                 System.out.println("Ending a client)");
@@ -171,25 +172,29 @@ public class ServerNulthread {
             * Linear search of the tags & regex into the Main memory
             */
             System.out.println("Linear search");
+            try {
+                Pattern pattern = Pattern.compile(regex);
+                
+                Matcher matcher;
+                ArrayList<String> sendedSentences = new ArrayList<String>();                        // List of the string already sended for ONE request (to avoid duplicates)
 
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher;
-            ArrayList<String> sendedSentences = new ArrayList<String>();                        // List of the string already sended for ONE request (to avoid duplicates)
-
-            for(int i = 0; i < this.dataTypes.size(); i++) {                                         // For each line in Main memory
-                int dataType = this.dataTypes.get(i);
-                for(int requestType : requestTypes) {                                           // For each requestType
-                    if(requestType == dataType) {                                               // If the type of the line match with one of the requestTypes   
-                        String returnSentence = this.dataSentences.get(i);
-                        matcher = pattern.matcher(returnSentence);
-                        if( matcher.find() && !sendedSentences.contains(returnSentence) ) {     // If we have a match and we do not have send it already (fot this request)
-                            sendedSentences.add(returnSentence);
-                            System.out.println("   ===> Responding \"" + returnSentence + "\" to the client");
-                            System.out.println("\n");
-                            clientOut.println(returnSentence);
+                for(int i = 0; i < this.dataTypes.size(); i++) {                                         // For each line in Main memory
+                    int dataType = this.dataTypes.get(i);
+                    for(int requestType : requestTypes) {                                           // For each requestType
+                        if(requestType == dataType) {                                               // If the type of the line match with one of the requestTypes   
+                            String returnSentence = this.dataSentences.get(i);
+                            matcher = pattern.matcher(returnSentence);
+                            if( matcher.find() && !sendedSentences.contains(returnSentence) ) {     // If we have a match and we do not have send it already (fot this request)
+                                sendedSentences.add(returnSentence);
+                                System.out.println("   ===> Responding \"" + returnSentence + "\" to the client");
+                                System.out.println("\n");
+                                clientOut.println(returnSentence);
+                            }
                         }
                     }
                 }
+            } catch (PatternSyntaxException e) {
+                System.out.println("/!\\ Wrong request syntax /!\\");
             }
         }
 
@@ -251,7 +256,9 @@ public class ServerNulthread {
         nThreads++;
     }
 
-
+    public synchronized boolean getActive() {
+        return active;
+    }
 
     /**
      * Stop the server and close the streams

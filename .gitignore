@@ -28,10 +28,8 @@ hs_err_pid*
 #ignore too large files
 dbdata.txt
 
-#ignore logs
-*.log
-
 #ignore sandboxes
 Brouillon.java
 Brouillon2.java
 serverFort_request_exemples.txt
+sandboxGau.java
