@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class addWordsToRegexCorpus {
     public static void main(String[] args) {
@@ -23,21 +25,34 @@ public class addWordsToRegexCorpus {
                     int toWrite;
                     for (int j = 0; j < sentence.length(); j += toWrite) {
                         toWrite = rand.nextInt(sentence.length()-j)+1;
-                        fileWriter.write(sentence.substring(j, j+toWrite)+'\n');
+                        String regex = sentence.substring(j, j+toWrite);
+                        try {
+                            Pattern pattern = Pattern.compile(regex);
+                            fileWriter.write(regex+'\n');
+                        }
+                        catch(PatternSyntaxException e) {
+                            System.out.println("A regex that do not compile was skipped : " + regex);
+                        }
                     }
                 }
             }
             bufferedReader.close();
-            System.out.println("finished writing words to file");
+            System.out.println("Finished writing words to file");
             
             bufferedReader = new BufferedReader(new FileReader("regexPreprocessing/regexCorpus.txt"));
             currentLine = bufferedReader.readLine();
             while ((currentLine = bufferedReader.readLine()) != null) {
-                fileWriter.write( currentLine + '\n' );
+                try {
+                    Pattern pattern = Pattern.compile(currentLine);
+                    fileWriter.write( currentLine + '\n' );
+                }
+                catch(PatternSyntaxException e) {
+                    System.out.println("A regex that do not compile was skipped : " + currentLine);
+                }
             }
             bufferedReader.close();
             fileWriter.close();
-            System.out.println("finished writing regex to file");
+            System.out.println("Finished writing regex to file");
         } catch (IOException e) {
             e.printStackTrace();
         }
