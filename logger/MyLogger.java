@@ -39,9 +39,8 @@ public class MyLogger {
     public synchronized void println(ArrayList<Long> arr) {
         try {
             for (Long chiffre : arr) {
-                bf.write( chiffre.toString()+";" );
+                bf.write( chiffre.toString() + "\n" );
             }
-            bf.write("\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
