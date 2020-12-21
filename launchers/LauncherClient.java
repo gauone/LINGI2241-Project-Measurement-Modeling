@@ -7,7 +7,7 @@ public class LauncherClient {
     public static void main(String[] args) {
 
         Double lambda = 5.0;
-        int portNumber = 21144;
+        int portNumber = 3900;
         int nClients = 15;
         Thread[] threads = new Thread[nClients];
 

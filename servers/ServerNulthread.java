@@ -58,6 +58,7 @@ public class ServerNulthread {
      * @throws IOException
      */
     public void start() throws IOException {
+        System.out.println(" -- Starting the server --");
 
         /*
          * Load the data into Main memory
@@ -68,7 +69,7 @@ public class ServerNulthread {
          * Create a socket and accept clients
          */
         try {
-            System.out.println("Creating a socket and waiting for the client");
+            // System.out.println("Creating a socket and waiting for the client");
             serverSocket = new ServerSocket(portNumber);    // Create the socket
         } catch (IOException e) {
             System.out.println("Exception when opening the socket with the portNumber : " + portNumber);
@@ -81,6 +82,7 @@ public class ServerNulthread {
                 Runnable brain = new Brain(clientSocket, dataTypes, dataSentences);
                 new Thread(brain).start();
                 incrementThreads();
+                System.out.println("Accepting a new client, nThreads : " + nThreads);
             }
         }
     }
@@ -109,21 +111,21 @@ public class ServerNulthread {
         @Override
         public void run() {
             try {
-                System.out.println("Creating the in and out streams with a client");
+                // System.out.println("Creating the in and out streams with a client");
                 clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
                 clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
                 /*
                  * Read the socket
                  */
-                System.out.println("Reading the socket");
+                // System.out.println("Reading the socket");
                 String request;
                 while((request = clientIn.readLine()) != null) {    // Read a request (that have the following format : "1,2,3;coucou")
                     searchLine(request);
                     clientOut.println("\n");
                 }
 
-                System.out.println("Ending a client)");
+                // System.out.println("Ending a client)");
                 stopBrain();
 
             } catch (IOException e) {
@@ -139,12 +141,12 @@ public class ServerNulthread {
          * @param request
          */
         public void searchLine(String request) {
-            System.out.println("Starting searchLine()");
+            // System.out.println("Starting searchLine()");
 
             /*
             * Getting the types and the regex of the request
             */
-            System.out.println("Getting types and regex from the request");
+            // System.out.println("Getting types and regex from the request");
             List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
             String regex;                                               // String containing the regex asked by the request
 
@@ -163,15 +165,14 @@ public class ServerNulthread {
 
             
             /*
-            * Linear search of the tags & regex into the Main memory
-            */
-            System.out.println("Linear search");
+             * Linear search of the tags & regex into the Main memory
+             */
+            // System.out.println("Linear search");
             try {
                 Pattern pattern = Pattern.compile(regex);
-                
                 Matcher matcher;
                 ArrayList<String> sendedSentences = new ArrayList<String>();                        // List of the string already sended for ONE request (to avoid duplicates)
-
+                boolean matched = false;
                 for(int i = 0; i < this.dataTypes.size(); i++) {                                         // For each line in Main memory
                     int dataType = this.dataTypes.get(i);
                     for(int requestType : requestTypes) {                                           // For each requestType
@@ -179,13 +180,17 @@ public class ServerNulthread {
                             String returnSentence = this.dataSentences.get(i);
                             matcher = pattern.matcher(returnSentence);
                             if( matcher.find() && !sendedSentences.contains(returnSentence) ) {     // If we have a match and we do not have send it already (fot this request)
+                                matched = true;
                                 sendedSentences.add(returnSentence);
-                                System.out.println("   ===> Responding \"" + returnSentence + "\" to the client");
-                                System.out.println("\n");
+                                // System.out.println("   ===> Responding \"" + returnSentence + "\" to the client");
+                                // System.out.println("\n");
                                 clientOut.println(returnSentence);
                             }
                         }
                     }
+                }
+                if(!matched) {
+                    System.out.println("No match found for the request : " + request);
                 }
             } catch (PatternSyntaxException e) {
                 System.out.println("/!\\ Wrong request syntax /!\\");
@@ -197,12 +202,13 @@ public class ServerNulthread {
          * Stop the brain
          */
         public void stopBrain() {
-            System.out.println("Stopping the brain");
+            // System.out.println("Stopping the brain");
             try {
                 clientOut.close();
                 clientIn.close();
                 clientSocket.close();
                 decrementThreads();
+                System.out.println("Exiting a client, nThreads = " + nThreads);
             } catch(IOException e) {
                 System.out.println("IOException at Server.stop()");
                 System.out.println(e.getMessage());
@@ -219,14 +225,14 @@ public class ServerNulthread {
      */
     public void loadMainMemory() throws IOException {
 
-        System.out.println("Starting LoadMemory()");
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("dbdata2.txt"));
+        // System.out.println("Starting LoadMemory()");
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("dbdata.txt"));
         
         String currentLine;
         while((currentLine = bufferedReader.readLine()) != null) {
             String[] splittedLine = currentLine.split("@@@");
             dataTypes.add(Integer.valueOf(splittedLine[0]));
-            dataSentences.add(splittedLine[1].toLowerCase());
+            dataSentences.add(splittedLine[1]);
         }
 
         bufferedReader.close();
@@ -250,6 +256,8 @@ public class ServerNulthread {
         nThreads++;
     }
 
+
+    
     public synchronized boolean getActive() {
         return active;
     }
@@ -258,7 +266,7 @@ public class ServerNulthread {
      * Stop the server and close the streams
      */
     public void stop() {
-        System.out.println("Stopping the server");
+        System.out.println(" -- Stopping the server -- ");
         active = false;
         try {
 			serverSocket.close();

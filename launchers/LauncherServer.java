@@ -12,14 +12,14 @@ public class LauncherServer {
 
     public static void main(String[] args) throws IOException {
 
-        int portNumber = 21144;
+        int portNumber = 3900;
 
-        ServerNulthread serverNulthread = new ServerNulthread(portNumber, 4);
         ServerForthread serverForthread = new ServerForthread(portNumber, 10);
+        // ServerNulthread serverNulthread = new ServerNulthread(portNumber, 4);
         Thread serverThread = new Thread(() -> {
             try {
-                serverNulthread.start();
-                //serverForthread.start();
+                serverForthread.start();
+                // serverNulthread.start();
             }
             catch(IOException e) {}
         });
@@ -29,8 +29,8 @@ public class LauncherServer {
         String fromUser;
         boolean hasStopped = false;
         while ( !hasStopped && (fromUser = stdIn.readLine()) != "stop" ) {
-            //serverForthread.stop();
-            serverNulthread.stop();
+            serverForthread.stop();
+            // serverNulthread.stop();
             hasStopped = true;
         }
         stdIn.close();

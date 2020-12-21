@@ -204,7 +204,7 @@ public class ServerForthread {
                             requestTypes.add(Integer.valueOf(stringTypes[i]));
                     }
 
-                    regex = splittedLine[1].toLowerCase(); 
+                    regex = splittedLine[1]; 
 
 
                     /*
@@ -318,7 +318,7 @@ public class ServerForthread {
             String[] splittedLine = currentLine.split("@@@");
 
 			int dataType = Integer.valueOf(splittedLine[0]);
-			String dataSentence = splittedLine[1].toLowerCase();
+			String dataSentence = splittedLine[1];
             
             switch(dataType) {
                 case 0 :
