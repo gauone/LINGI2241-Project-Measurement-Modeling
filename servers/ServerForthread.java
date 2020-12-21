@@ -80,7 +80,7 @@ public class ServerForthread {
             System.err.println(e.getMessage());
         }
 
-        while(active) { // Keep nMaxThreads running
+        while(getActive()) { // Keep nMaxThreads running
             if(nThreads < nMaxThreads) {
                 Socket clientSocket = serverSocket.accept(); // Accept a client
                 Runnable brain = new Brain(clientSocket, data);
@@ -145,6 +145,7 @@ public class ServerForthread {
                 System.out.println("/!\\ Exception in run() /!\\");
                 System.out.println(e.getMessage());
             }
+            System.out.println(" * End of a thread");
         }
 
 
@@ -368,6 +369,12 @@ public class ServerForthread {
      */
     public synchronized void incrementThreads() {
         nThreads++;
+    }
+
+
+
+    public synchronized boolean getActive() {
+        return active;
     }
 
 

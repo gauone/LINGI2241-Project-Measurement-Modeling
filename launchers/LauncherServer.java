@@ -51,26 +51,25 @@ public class LauncherServer {
         /*
          * serverNulthread
          */
-        ServerForthread serverForthread = new ServerForthread(portNumber, 1);
+        ServerForthread serverForthread = new ServerForthread(portNumber, 10);
         Thread serverThread = new Thread(() -> {
             try {
                 
                 serverForthread.start();
             }
-            catch(Exception e) {
-                System.out.println("/!\\ Exception in LauncherServer /!\\");
-                System.out.println(e.getMessage());
-            }
-
+            catch(IOException e) {}
         });
         serverThread.start();
         
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         String fromUser;
-        while ((fromUser = stdIn.readLine()) != "stop") {
+        boolean hasStopped = false;
+        while ( !hasStopped && (fromUser = stdIn.readLine()) != "stop" ) {
             serverForthread.stop();
+            hasStopped = true;
         }
         stdIn.close();
         
+        System.out.println(" ---- SERVER SHUT DOWN, ZZZzzz ! ----");
     }
 }
