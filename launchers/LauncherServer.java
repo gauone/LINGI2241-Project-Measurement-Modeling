@@ -1,6 +1,8 @@
 package launchers;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import servers.*;
 
@@ -49,8 +51,26 @@ public class LauncherServer {
         /*
          * serverNulthread
          */
-        ServerForthread serverForthread = new ServerForthread(portNumber, 2);
-        serverForthread.start();
-        serverForthread.stop();
+        ServerForthread serverForthread = new ServerForthread(portNumber, 1);
+        Thread serverThread = new Thread(() -> {
+            try {
+                
+                serverForthread.start();
+            }
+            catch(Exception e) {
+                System.out.println("/!\\ Exception in LauncherServer /!\\");
+                System.out.println(e.getMessage());
+            }
+
+        });
+        serverThread.start();
+        
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+        String fromUser;
+        while ((fromUser = stdIn.readLine()) != "stop") {
+            serverForthread.stop();
+        }
+        stdIn.close();
+        
     }
 }
