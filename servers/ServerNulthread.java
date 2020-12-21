@@ -34,16 +34,17 @@ public class ServerNulthread {
     List<Integer> dataTypes = new ArrayList<Integer>();     // List of Integers containing the types per line : 2.442.237
     List<String> dataSentences = new ArrayList<String>();   // List of Strings containing the Strings per line : 2.442.237
 
-
+    String dbFile;
 
     /**
      * Constructor
      * 
      * @param portNumber
      */
-    public ServerNulthread(int portNumber, int nMaxThreads) {
+    public ServerNulthread(int portNumber, int nMaxThreads, String dbFile) {
         this.portNumber = portNumber;
         this.nMaxThreads = nMaxThreads;
+        this.dbFile = dbFile;
     }
 
     
@@ -226,7 +227,7 @@ public class ServerNulthread {
     public void loadMainMemory() throws IOException {
 
         // System.out.println("Starting LoadMemory()");
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("dbdata.txt"));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(this.dbFile));
         
         String currentLine;
         while((currentLine = bufferedReader.readLine()) != null) {
