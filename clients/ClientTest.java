@@ -1,69 +1,49 @@
 package clients;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 public class ClientTest {
-    public static void testRequest(List<Integer> types, String regex) {
-        String typesString = types.stream().map(n -> String.valueOf(n)).collect(Collectors.joining(","));
-
-        System.out.println(typesString + ";" + regex);
-        
-    }
+    
     public static void main(String[] args){
-        List l = List.of("1", "2", "3");
-        //testRequest(l, "salut");
-        testComputation();
-    }
-
-    protected static ArrayList<Long> sendingTimes = new ArrayList<Long>();
-    protected static ArrayList<Long> arrivingTimes = new ArrayList<Long>();
-
-    public static void testComputation() {
-        sendingTimes.add(Long.valueOf(10));
-        sendingTimes.add(Long.valueOf(10));
-        sendingTimes.add(Long.valueOf(10));
-        sendingTimes.add(Long.valueOf(10));
-        sendingTimes.add(Long.valueOf(10));
-        sendingTimes.add(Long.valueOf(10));
- 
-        arrivingTimes.add(Long.valueOf(0));
-        arrivingTimes.add(Long.valueOf(1));
-        arrivingTimes.add(Long.valueOf(2));
-        arrivingTimes.add(Long.valueOf(0));
-        arrivingTimes.add(Long.valueOf(1));
-        arrivingTimes.add(Long.valueOf(2));
-        arrivingTimes.add(Long.valueOf(0));
-        arrivingTimes.add(Long.valueOf(9));
-        arrivingTimes.add(Long.valueOf(8));
-        arrivingTimes.add(Long.valueOf(0));
-        arrivingTimes.add(Long.valueOf(1));
-        arrivingTimes.add(Long.valueOf(0));
-        arrivingTimes.add(Long.valueOf(1));
-        arrivingTimes.add(Long.valueOf(0));
-        arrivingTimes.add(Long.valueOf(8));
-        arrivingTimes.add(Long.valueOf(0));
-
-        ArrayList<Long> responsesTime = new ArrayList<Long>();
-        Long start, stop;
-        int indexArrival = 0;
-        for (int i=0; i < sendingTimes.size(); i++) {
-            start = sendingTimes.get(i);
-            stop = arrivingTimes.get(indexArrival);
-            while ( (!stop.equals(Long.valueOf(0))) && indexArrival < arrivingTimes.size() ) {
-                responsesTime.add(stop - start);
-                indexArrival++;
-                stop = arrivingTimes.get(indexArrival);
+        String hostName = "localhost";
+        int portNumber = 3900;
+        Socket socket;
+        PrintWriter clientOut;
+        BufferedReader clientIn;
+		try {
+            socket = new Socket(hostName, portNumber);
+            clientOut = new PrintWriter(socket.getOutputStream(), true);
+            clientIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            
+            Thread sending= new Thread(()-> {
+                clientOut.println("0,1,2,3;second");
+                clientOut.println("0,1;by");
+            });
+            sending.start();
+            int count = 1;
+            String fromServer;
+            while ((fromServer = clientIn.readLine()) != null) {
+                if (fromServer.equals("") && count%2 == 1){
+                    System.out.println("-----new line----");
+                    count++;
+                }
+                else if (fromServer.equals("")){
+                    count++;
+                } else 
+                    System.out.println("Server: " + fromServer + "\n");
             }
-            responsesTime.add(Long.valueOf(0));
-            if (indexArrival < arrivingTimes.size()) {
-                indexArrival = indexArrival+1;
-            }
+
+        } catch (IOException e) {
+			e.printStackTrace();
         }
-
-        // Write the response times to a file.
-        System.out.println(responsesTime);
+        
+        System.out.print("youpidouuuuu c'est fini");
+		
     }
+       
 
 }

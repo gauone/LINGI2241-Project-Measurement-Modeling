@@ -40,23 +40,35 @@ public class Client {
             clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
             clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             
-            //int N = rand.nextInt(100)+1;
-            int N = 2;
+            int N = rand.nextInt(100)+1;
+            System.out.println(this + "- going to launch" + String.valueOf(N) + " requests.");
 
             Thread sender = new Thread(() -> { launchRequests(lambda, N);});
             sender.start();
+            // Thread sending= new Thread(()-> {
+            //     clientOut.println("0,1,2,3;second");
+            //     clientOut.println("0;by");
+            // });
+            // sending.start();
             
             
-            int received = 0;
+            int count = 1;
             String fromServer;
-            while ( ((fromServer = clientIn.readLine()) != null) && received < N ) {
-                System.out.println(" - Server: " + fromServer);
-                if (fromServer.equals("")) {
-                    System.out.println(" - Server: ------!!NewLine!!------");
-                    received++;
+            while ( ((fromServer = clientIn.readLine()) != null) && count < 2*N ) {
+                if (fromServer.equals("") && count%2 == 1) {
+                    // System.out.println("-----new line----");
+                    this.arrivingTimes.add(System.nanoTime());
+                    count++;
+                }
+                else if (fromServer.equals("")) {
+                    count++;
+                } else {
+                    // System.out.println("- Server: " + fromServer + "\n");
                 }
             }
             
+            System.out.println(this + " received "+ String.valueOf(count-1) + " responses.");
+
             sender.join();
             stopClient();
         } catch (UnknownHostException e) {
@@ -159,7 +171,7 @@ public class Client {
         for (int i = 0; i < this.sendingTimes.size(); i++) {
             start = this.sendingTimes.get(i);
             stop = this.arrivingTimes.get(i);
-            responsesTime.add(stop - start);            
+            responsesTime.add(stop - start);       
         }
 
         MyLogger.getInstance().println(responsesTime);
