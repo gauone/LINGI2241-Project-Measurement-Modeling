@@ -59,7 +59,7 @@ public class ServerNulthread {
      * @throws IOException
      */
     public void start() throws IOException {
-        System.out.println(" -- Starting the server --");
+        System.out.println(" -- Starting the server Null --");
 
         /*
          * Load the data into Main memory
