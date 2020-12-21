@@ -47,6 +47,7 @@ public class ServerForthread {
     final int cacheMaxSize = 10;                                                            // We keep maximum the last 100 requests with their responses
     final int nReset = 3;                                                                   // Reset of the use bits each nReset instructions
 
+    final String dbFilename;
 
 
     /**
@@ -54,9 +55,10 @@ public class ServerForthread {
      * 
      * @param portNumber
      */
-    public ServerForthread(int portNumber, int nMaxThreads) {
+    public ServerForthread(int portNumber, int nMaxThreads, String dbFilename) {
         this.portNumber = portNumber;
         this.nMaxThreads = nMaxThreads;
+        this.dbFilename = dbFilename;
     }
 
     
@@ -76,7 +78,6 @@ public class ServerForthread {
          * Load the data into Main memory
          */
         loadMainMemory();
-        System.out.println("breakpoint");
         
         /*
          * Create a socket and accept clients
@@ -311,7 +312,7 @@ public class ServerForthread {
         ArrayList<String> sentences4 = new ArrayList<String>();   // List of Strings containing the Strings per line : 2.442.237
         ArrayList<String> sentences5 = new ArrayList<String>();   // List of Strings containing the Strings per line : 2.442.237
         
-		BufferedReader bufferedReader = new BufferedReader(new FileReader("dbdata2.txt"));
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(this.dbFilename));
 		
 		String currentLine;
         while ((currentLine = bufferedReader.readLine()) != null) {

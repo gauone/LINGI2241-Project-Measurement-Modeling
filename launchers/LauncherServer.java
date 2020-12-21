@@ -14,7 +14,7 @@ public class LauncherServer {
 
         int portNumber = 3900;
 
-        ServerForthread serverForthread = new ServerForthread(portNumber, 10);
+        ServerForthread serverForthread = new ServerForthread(portNumber, 10, "dbdata2.txt");
         // ServerNulthread serverNulthread = new ServerNulthread(portNumber, 4);
         Thread serverThread = new Thread(() -> {
             try {
