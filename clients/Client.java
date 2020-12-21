@@ -8,10 +8,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import logger.MyLogger;
 
@@ -26,13 +24,12 @@ public class Client {
     Random rand = new Random();
 
     /**
-     * Constructor. It gets the get the static variables, creates the client object
-     * and start a thread listening on the socket.
+     * Constructor. It gets the get the static variables, creates the client object,
+     * sends a random number of request to the serveur and listens on the socket.
      * 
      * @param hostName     a (Sting) containing the name of the server's hostname
      * @param portNumber   a (int) containing the port number to reach the server
-     * @param inputFromStd a (Boolean) telling if the some requests are to be
-     *                     listened from std.
+     * @param lambda       a (Double) specifing the rate  
      */
     public Client(String hostName, int portNumber, Double lambda) {
         try {
@@ -45,18 +42,11 @@ public class Client {
 
             Thread sender = new Thread(() -> { launchRequests(lambda, N);});
             sender.start();
-            // Thread sending= new Thread(()-> {
-            //     clientOut.println("0,1,2,3;second");
-            //     clientOut.println("0;by");
-            // });
-            // sending.start();
-            
             
             int count = 1;
             String fromServer;
             while ( ((fromServer = clientIn.readLine()) != null) && count < 2*N ) {
                 if (fromServer.equals("") && count%2 == 1) {
-                    // System.out.println("-----new line----");
                     this.arrivingTimes.add(System.nanoTime());
                     count++;
                 }
@@ -67,7 +57,7 @@ public class Client {
                 }
             }
             
-            System.out.println(this + " received "+ String.valueOf(count-1) + " responses.");
+            System.out.println(this + " received "+ String.valueOf(count/2) + " responses.");
 
             sender.join();
             stopClient();
@@ -85,10 +75,12 @@ public class Client {
     public void launchRequests(double lambda, int N) {
         try {
             for (int i = 0; i < N; i++) {
-                TimeUnit.SECONDS.sleep((long)getRandomExponential(lambda));
+                long time = (long)getRandomExponential(lambda);
+                System.out.println("waiting " + String.valueOf(time) + " seconds before the next request");
+                TimeUnit.SECONDS.sleep(time);
                 String request = generateRequest();
                 sendRequest(request);
-                System.out.println(" - Client send the request : " + request + "\n");
+                //System.out.println(" - Client: send the request : " + request + "\n");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -168,7 +160,7 @@ public class Client {
         // Compute the responses times
         ArrayList<Long> responsesTime = new ArrayList<Long>();
         Long start, stop;
-        for (int i = 0; i < this.sendingTimes.size(); i++) {
+        for (int i = 0; i < this.arrivingTimes.size(); i++) {
             start = this.sendingTimes.get(i);
             stop = this.arrivingTimes.get(i);
             responsesTime.add(stop - start);       

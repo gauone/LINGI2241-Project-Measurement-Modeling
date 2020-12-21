@@ -1,12 +1,26 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
 //import VerbalExpressions;
 public class sandboxGau {
 
-
 	public static void main(String[] args) {
-		
+		System.out.println("start");
+		// try {
+		// 	 TimeUnit.SECONDS.sleep((long)10.3);
+		// } catch (InterruptedException e) {
+		// 	e.printStackTrace();
+		// }
+		for (int i=0; i<5; i++){
+			double a = getRandomExponential(1.0);
+			System.out.println(a);
+		}
+		System.out.println("stop");
+	}
+
+	public static double getRandomExponential(double lambda) {
+		Random rand = new Random();
+		return Math.log(1 - rand.nextDouble()) / (-lambda);
 	}
 }
 
