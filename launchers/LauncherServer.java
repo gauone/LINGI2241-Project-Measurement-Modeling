@@ -18,7 +18,7 @@ public class LauncherServer {
         // }
         // int portNumber = Integer.parseInt(args[0]);
 
-        int portNumber = 3900;
+        int portNumber = 21144;
 
         /*
          * ServerNul
