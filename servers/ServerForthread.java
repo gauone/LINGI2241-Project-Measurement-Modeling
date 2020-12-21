@@ -136,7 +136,7 @@ public class ServerForthread {
                     searchLine(request);
                     System.out.println("\n");
                     System.out.println(" * Request treated (\\n)");
-                    clientOut.print("\n");
+                    clientOut.println("\n");
                     System.out.println("\n");
                     nRequests++;
                 }
