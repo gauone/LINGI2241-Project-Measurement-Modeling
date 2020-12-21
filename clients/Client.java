@@ -38,7 +38,7 @@ public class Client {
             clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             
             int N = rand.nextInt(100)+1;
-            System.out.println(this + "- going to launch" + String.valueOf(N) + " requests.");
+            System.out.println(" - " + this + " going to launch" + String.valueOf(N) + " requests.");
 
             Thread sender = new Thread(() -> { launchRequests(lambda, N);});
             sender.start();
@@ -76,8 +76,7 @@ public class Client {
         try {
             for (int i = 0; i < N; i++) {
                 long time = (long)getRandomExponential(lambda);
-                System.out.println("waiting " + String.valueOf(time) + " seconds before the next request");
-                TimeUnit.SECONDS.sleep(time);
+                TimeUnit.MILLISECONDS .sleep(time);
                 String request = generateRequest();
                 sendRequest(request);
                 //System.out.println(" - Client: send the request : " + request + "\n");
@@ -87,6 +86,10 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public double getRandomExponential(double lambda) {
+        return 1000 * Math.log(1 - rand.nextDouble()) / (-lambda);
     }
 
     public String generateRequest() throws IOException {
@@ -152,10 +155,6 @@ public class Client {
         this.clientOut.println(request);
     }
 
-    public double getRandomExponential(double lambda) {
-        return Math.log(1 - rand.nextDouble()) / (-lambda);
-    }
-
     public void stopClient() {
         // Compute the responses times
         ArrayList<Long> responsesTime = new ArrayList<Long>();
@@ -176,6 +175,6 @@ public class Client {
             System.out.println(" IOException closing the socket, PrintWriter and BufferedReader");
             System.out.println(e.getMessage());
         }
-        System.out.println(" - Finised Thread in client \n");
+        System.out.println(" - Finised Thread in client");
     }
 }
