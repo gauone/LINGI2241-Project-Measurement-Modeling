@@ -73,7 +73,7 @@ public class ServerForthread {
      * @throws IOException
      */
     public void start() throws IOException {
-        System.out.println(" -- Starting the server Fort --");
+        System.out.println(" -- Starting ServerForthread --");
         /*
          * Load the data into Main memory
          */
@@ -360,7 +360,7 @@ public class ServerForthread {
      * Stop the server and close the streams
      */
     public void stop() {
-        System.out.println(" -- Stopping the server --");
+        System.out.println(" -- Stopping ServerForthread --");
         setActive(false);
         try {
 			serverSocket.close();

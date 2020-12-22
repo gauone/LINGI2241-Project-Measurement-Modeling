@@ -19,7 +19,7 @@ import java.util.regex.PatternSyntaxException;
 /**
     Write a better server than serverNulthread
 */
-public class ServerForthreadNewCache {
+public class ServerPuissanthread {
 
     // Port number
     int portNumber;
@@ -56,7 +56,7 @@ public class ServerForthreadNewCache {
      * 
      * @param portNumber
      */
-    public ServerForthreadNewCache(int portNumber, int nMaxThreads, String dbFilename) {
+    public ServerPuissanthread(int portNumber, int nMaxThreads, String dbFilename) {
         this.portNumber = portNumber;
         this.nMaxThreads = nMaxThreads;
         this.dbFilename = dbFilename;
@@ -74,7 +74,7 @@ public class ServerForthreadNewCache {
      * @throws IOException
      */
     public void start() throws IOException {
-        System.out.println(" -- Starting the server Fort with the new cache --");
+        System.out.println(" -- Starting ServerPuissanthread --");
         /*
          * Load the data into Main memory
          */
@@ -365,7 +365,7 @@ public class ServerForthreadNewCache {
      * Stop the server and close the streams
      */
     public void stop() {
-        System.out.println(" -- Stopping the server --");
+        System.out.println(" -- Stopping ServerPuissanthread --");
         setActive(false);
         try {
 			serverSocket.close();

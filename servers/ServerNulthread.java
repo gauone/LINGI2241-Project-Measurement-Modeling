@@ -59,7 +59,7 @@ public class ServerNulthread {
      * @throws IOException
      */
     public void start() throws IOException {
-        System.out.println(" -- Starting the server Null --");
+        System.out.println(" -- Starting ServerNulthread --");
 
         /*
          * Load the data into Main memory
@@ -267,7 +267,7 @@ public class ServerNulthread {
      * Stop the server and close the streams
      */
     public void stop() {
-        System.out.println(" -- Stopping the server -- ");
+        System.out.println(" -- Stopping ServerNulthread -- ");
         active = false;
         try {
 			serverSocket.close();
