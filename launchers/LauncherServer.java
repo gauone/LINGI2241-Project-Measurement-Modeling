@@ -16,23 +16,26 @@ public class LauncherServer {
 
         // Implementation
         ServerNulthread serverNulthread = new ServerNulthread(portNumber, 4, dbFile);
-        ServerForthread serverForthread = new ServerForthread(portNumber, 10, dbFile);
+        // ServerForthread serverForthread = new ServerForthread(portNumber, 10, dbFile);
+        ServerForthreadNewCache serverForthreadNewCache = new ServerForthreadNewCache(portNumber, 10, dbFile);
 
         Thread serverThread = new Thread(() -> {
             try {
                 if (launchNullServer) {serverNulthread.start();}
-                else {serverForthread.start();}
+                // else {serverForthread.start();}
+                else {serverForthreadNewCache.start();}
             }
             catch(IOException e) {e.printStackTrace();}
         });
         serverThread.start();
         
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-        String fromUser;
+
         boolean hasStopped = false;
-        while ( !hasStopped && (fromUser = stdIn.readLine()) != "stop" ) {
+        while ( !hasStopped && (stdIn.readLine()) != "stop" ) {
             if (launchNullServer) {serverNulthread.stop();}
-            else {serverForthread.stop();}
+            // else {serverForthread.stop();}
+            else {serverForthreadNewCache.stop();}
             hasStopped = true;
         }
         stdIn.close();

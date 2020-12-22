@@ -16,7 +16,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-
 /**
     Write a better server than serverNulthread
 */
@@ -39,9 +38,9 @@ public class ServerForthreadNewCache {
     HashMap<Integer, ArrayList<String>> data = new HashMap<Integer, ArrayList<String>>(); // Hashmap with key : type (Integer);
                                                                                           // value : sentences (list of String)
 
-    // Cache
-    HashMap<String, ArrayList<String>> cache = new HashMap<String, ArrayList<String>>(); // Hashmap with key : request;
-                                                                                         // value : sendedSentences
+    // CacheHashmap with key : request; Value : (Hashmap with key : request and value sendedSentences)
+    HashMap<String, HashMap<Integer, ArrayList<String>>> cache = new HashMap<String, HashMap<Integer, ArrayList<String>>>();
+
     HashMap<String, Integer> cacheUseBit = new HashMap<String, Integer>(); // Hashmap with key : request;
                                                                            // value : usedBit
     int cacheSize = 0; // Amount of request in the cache
@@ -168,49 +167,46 @@ public class ServerForthreadNewCache {
                 setResetBits(false);
             }
 
+            List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
+            String regex;                                               // String containing the regex asked by the request
 
+            String[] splittedLine = request.split(";", 2);              // Split to have the tags (String) and the regex
+
+            if(splittedLine[0].equals("")) {                            // If the request do not contain a type, we are looking for each of them
+                splittedLine[0] = "0,1,2,3,4,5";
+            }
+
+            String[] stringTypes = splittedLine[0].split(",");
+            for(int i = 0; i < stringTypes.length; i++) {
+                    requestTypes.add(Integer.valueOf(stringTypes[i]));
+            }
+
+            regex = splittedLine[1]; 
+
+            List<Integer> remaining_types = new ArrayList<Integer>();
+            HashMap<Integer,ArrayList<String>> cache_entry;
             /*
              * Search in cache
              */
-            // System.out.println(" * Search in Cache");
-
-            if(containsCache(request)) {
+            if(containsCache(regex)) {
                 // System.out.println(" -- It is in Cache");
-
-                ArrayList<String> sendedSentences = getCache(request);
-                for(String sendedSentence : sendedSentences) {
-                    // System.out.println("\n");
-                    // System.out.println("   ===> Responding (from cache) \"" + sendedSentence + "\" ");
-                    // System.out.println("        To the request : " + request);
-                    clientOut.println(sendedSentence);
-                    setCacheUseBit(request);
+                cache_entry = getCache(request);                            // take the cache entry if it exits
+                for(int requestType : requestTypes) {                       // take all types that you are looking for from the cache
+                    if (cache_entry.containsKey(requestType)) {
+                        ArrayList<String> sendedSentences = cache_entry.get(requestType);
+                        for(String sendedSentence : sendedSentences) {
+                            clientOut.println(sendedSentence);
+                            setCacheUseBit(regex);
+                        }
+                    } else {
+                        remaining_types.add(requestType);                   // if the some type we are looking for aren't in cache
+                    }
                 } 
+            } else {                                                        // create a new cache entry if it doesn't exist
+                cache_entry = new HashMap<Integer, ArrayList<String>>();
             }
-            else {
-                // System.out.println(" * It is NOT in Cache");
-
-                /*
-                 * Getting the types and the regex of the request
-                 */
-
+            if (remaining_types.size() > 0) {                               // if nothing intressting was in the cache or if the cache doesn't contain all wanted types
                 try {
-                    List<Integer> requestTypes = new ArrayList<Integer>();      // List of Integer containing the tags asked by the request
-                    String regex;                                               // String containing the regex asked by the request
-
-                    String[] splittedLine = request.split(";", 2);              // Split to have the tags (String) and the regex
-
-                    if(splittedLine[0].equals("")) {                            // If the request do not contain a type, we are looking for each of them
-                        splittedLine[0] = "0,1,2,3,4,5";
-                    }
-
-                    String[] stringTypes = splittedLine[0].split(",");
-                    for(int i = 0; i < stringTypes.length; i++) {
-                            requestTypes.add(Integer.valueOf(stringTypes[i]));
-                    }
-
-                    regex = splittedLine[1]; 
-
-
                     /*
                      * Search of the tags & regex into the Main memory
                      *    requestTypes = [1, 2, 3]
@@ -220,20 +216,23 @@ public class ServerForthreadNewCache {
                     Matcher matcher;
                     ArrayList<String> sendedSentences = new ArrayList<String>();    // List of the string already sended for ONE request (to avoid duplicates)
                     boolean matched = false;
-                    for(int requestType : requestTypes) {
+                    for(int requestType : remaining_types) {
+                        ArrayList<String> this_type_sentence = new ArrayList<String>();
                         ArrayList<String> sentences = data.get(requestType);
                         for(int i = 0; i < sentences.size(); i++) {
                             String returnSentence = sentences.get(i);
                             matcher = pattern.matcher(returnSentence);
-                            if( (matcher.find()) && (!sendedSentences.contains(returnSentence)) ) { // If we have a match and we do not have send it already (fot this request)
+                            if( (matcher.find()) && (!sendedSentences.contains(returnSentence)) ) { // If we have a match and we do not have send it already (for this request)
                                 matched = true;
                                 sendedSentences.add(returnSentence);
+                                this_type_sentence.add(returnSentence);
                                 // System.out.println("\n");
                                 // System.out.println("   ===> Responding (from main memory) \"" + returnSentence + "\" ");
                                 // System.out.println("        To the request : " + request);
                                 clientOut.println(returnSentence);
                             }
                         }
+                        cache_entry.put(requestType, this_type_sentence);
                     }
                     if(!matched) {
                         System.out.println("No match found for the request : " + request);
@@ -267,8 +266,8 @@ public class ServerForthreadNewCache {
                     }
 
                     // Put the new request in cache
-                    putCache(request, sendedSentences);
-                    setCacheUseBit(request);
+                    putCache(regex, cache_entry);
+                    setCacheUseBit(regex);
                     incrementCacheSize();;
                 }
                 catch(PatternSyntaxException e) {
@@ -430,7 +429,7 @@ public class ServerForthreadNewCache {
     /**
      * Get a value of the cache synchronously
      */
-    public synchronized ArrayList<String> getCache(String request) {
+    public synchronized HashMap<Integer, ArrayList<String>> getCache(String request) {
         return this.cache.get(request);
     }
     
@@ -448,8 +447,8 @@ public class ServerForthreadNewCache {
     /**
      * Add an entry in the cache synchronously
      */
-    public synchronized void putCache(String request, ArrayList<String> sendedSentences) {
-        this.cache.put(request, sendedSentences);
+    public synchronized void putCache(String regex, HashMap<Integer, ArrayList<String>> cache_entry) {
+        this.cache.put(regex, cache_entry);
     }
 
 
