@@ -23,25 +23,28 @@ public class RequestDifficultyClient {
 
             BufferedReader bufferedReader = new BufferedReader(new FileReader("regex.txt"));
             String currentLine;
-            int N = 0;
+            // int N = 0;
             while ((currentLine = bufferedReader.readLine()) != null) {
-                N++;
+                // N++;
+                int N = 1;
                 this.clientOut.println(";" + currentLine);
-                System.out.println("-- testing the request: ;" + currentLine);
+                int nbMatch = 0;
+                int count = 1;
+                String fromServer;
+                while ( ((fromServer = clientIn.readLine()) != null) && count < 2*N ) {
+                    if (fromServer.equals("") && count%2 == 1) {
+                        count++;
+                    }
+                    else if (fromServer.equals("")) {
+                        count++;
+                    } else {
+                        nbMatch++;
+                        // System.out.println("- Server: " + fromServer + "\n");
+                    }
+                }
+                System.out.println(nbMatch + " "+ currentLine);
             }
 
-            int count = 1;
-            String fromServer;
-            while ( ((fromServer = clientIn.readLine()) != null) && count < 2*N ) {
-                if (fromServer.equals("") && count%2 == 1) {
-                    count++;
-                }
-                else if (fromServer.equals("")) {
-                    count++;
-                } else {
-                    // System.out.println("- Server: " + fromServer + "\n");
-                }
-            }
 
             bufferedReader.close();
             stopClient();

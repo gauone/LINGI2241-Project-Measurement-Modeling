@@ -24,8 +24,8 @@ public class LauncherServer {
 
         Thread serverThread = new Thread(() -> {
             try {
-                // if(launchNullServer) {serverNulthread.start();}
-                if(launchNullServer) {serverNulthreadSkip.start();}
+                if(launchNullServer) {serverNulthread.start();}
+                // if(launchNullServer) {serverNulthreadSkip.start();}
                 // else {serverForthread.start();}
                 else {serverPuissanthread.start();}
             }
@@ -37,8 +37,8 @@ public class LauncherServer {
 
         boolean hasStopped = false;
         while ( !hasStopped && (stdIn.readLine()) != "stop" ) {
-            // if (launchNullServer) {serverNulthread.stop();}
-            if(launchNullServer) {serverNulthreadSkip.stop();}
+            if (launchNullServer) {serverNulthread.stop();}
+            // if(launchNullServer) {serverNulthreadSkip.stop();}
             // else {serverForthread.stop();}
             else {serverPuissanthread.stop();}
             hasStopped = true;
