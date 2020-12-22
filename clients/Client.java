@@ -27,20 +27,33 @@ public class Client {
      * Constructor. It gets the get the static variables, creates the client object,
      * sends a random number of request to the serveur and listens on the socket.
      * 
-     * @param hostName     a (Sting) containing the name of the server's hostname
-     * @param portNumber   a (int) containing the port number to reach the server
-     * @param lambda       a (Double) specifing the rate  
+     * @param hostName   a (Sting) containing the name of the server's hostname
+     * @param portNumber a (int) containing the port number to reach the server
+     * @param lambda     a (Double) specifing the rate
      */
     public Client(String hostName, int portNumber, Double lambda) {
         try {
             clientSocket = new Socket(hostName, portNumber);
             clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
             clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            
-            int N = rand.nextInt(10)+1;
+
+            int N = rand.nextInt(10) + 1;
             System.out.println(" - " + this + " going to launch " + String.valueOf(N) + " requests.");
 
-            Thread sender = new Thread(() -> { launchRequests(lambda, N);});
+            Thread sender = new Thread(() -> {
+                // launchRequests(lambda, N);
+                // Forcer l'envoi de ces requêtes A SUPPRIMER TODO TODO TODO TODO TODO TODO TODO TODO:
+                try {
+                    String[] requests = {"1;Transport", "0;Transport", "0,1,2,3;second", "2;second", "3,4;by", "0,1,2,3,4;by"};
+                    for (String request : requests){
+                        long time = (long) getRandomExponential(lambda);
+                        TimeUnit.MILLISECONDS.sleep(time);
+                        sendRequest(request);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
             sender.start();
             
             int count = 1;
@@ -53,7 +66,7 @@ public class Client {
                 else if (fromServer.equals("")) {
                     count++;
                 } else {
-                    // System.out.println("- Server: " + fromServer + "\n");
+                    System.out.println("- Server: " + fromServer + "\n"); // TODO recommenter ca
                 }
             }
             
