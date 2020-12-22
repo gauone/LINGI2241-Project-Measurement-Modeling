@@ -10,12 +10,12 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 
-public class RequestDifficultyClient {
+public class ClientSkip {
     protected Socket clientSocket;
     protected PrintWriter clientOut; // to send info to server
     protected BufferedReader clientIn; // to get info from the server
 
-    public RequestDifficultyClient(String hostName, int portNumber) {
+    public ClientSkip(String hostName, int portNumber) {
         try {
             clientSocket = new Socket(hostName, portNumber);
             clientOut = new PrintWriter(clientSocket.getOutputStream(), true);

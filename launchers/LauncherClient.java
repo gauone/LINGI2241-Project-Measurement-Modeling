@@ -1,7 +1,7 @@
 package launchers;
 
 import clients.Client;
-import clients.RequestDifficultyClient;
+import clients.ClientSkip;
 import logger.MyLogger;
 
 public class LauncherClient {
@@ -9,15 +9,15 @@ public class LauncherClient {
 
         Double lambda = 5.0;
         int portNumber = 3900;
-        int nClients = 1;
+        int nClients = 50;
         Thread[] threads = new Thread[nClients];
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < nClients; i++) {
             threads[i] = new Thread(() -> {
                 try {
-                    //new Client("localhost", portNumber, lambda);
-                    new RequestDifficultyClient("localhost", portNumber);
+                    new Client("localhost", portNumber, lambda);
+                    // new ClientSkip("localhost", portNumber);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                     System.exit(1);
