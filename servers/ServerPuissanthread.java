@@ -41,11 +41,11 @@ public class ServerPuissanthread {
     // Cache
     // ==> Hashmap with key : regex; Value : (Hashmap with key : types and value sendedSentences)
     HashMap<String, HashMap<Integer, ArrayList<String>>> cache = new HashMap<String, HashMap<Integer, ArrayList<String>>>();
-    HashMap<String, Integer> cacheUseBit = new HashMap<String, Integer>(); // Hashmap with key : request; value : usedBit
-    int nRequests = 0; // Amount of instructions from the last use bits reset
-    boolean resetBits = false; // Set to true when we have to reset the use bits
-    final int cacheMaxSize = 10; // We keep maximum the last 100 requests with their responses
-    final int nReset = 3; // Reset of the use bits each nReset instructions
+    HashMap<String, Integer> cacheUseBit = new HashMap<String, Integer>();                                                      // Hashmap with key : request; value : usedBit
+    int nRequests = 0;                                                                                                          // Amount of instructions from the last use bits reset
+    boolean resetBits = false;                                                                                                  // Set to true when we have to reset the use bits
+    final int cacheMaxSize = 100;                                                                                               // We keep maximum the last 100 requests with their responses
+    final int nReset = 10;                                                                                                      // Reset of the use bits each nReset instructions
 
     // Memory file
     final String dbFilename;
@@ -208,6 +208,7 @@ public class ServerPuissanthread {
             else {                                                          // Create a new cache entry if it doesn't exist
                 cache_entry = new HashMap<Integer, ArrayList<String>>();
                 remaining_types = requestTypes;
+                System.out.println(" -- Remaining types are all requestTypes");
             }
 
             if(remaining_types.size() > 0) {                               // if nothing intressting was in the cache or if the cache doesn't contain all wanted types
