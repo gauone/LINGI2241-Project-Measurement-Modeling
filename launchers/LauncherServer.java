@@ -14,12 +14,12 @@ public class LauncherServer {
         Boolean launchNullServer = false;
         int portNumber = 3900;
         String dbFile = "dbdata.txt";
-        int nClients = 1;
+        int nThreads = 2;
 
         // Implementation
-        ServerNulthread serverNulthread = new ServerNulthread(portNumber, nClients, dbFile);
-        ServerPuissanthread serverPuissanthread = new ServerPuissanthread(portNumber, nClients, dbFile);
-        ServerForthread serverForthread = new ServerForthread(portNumber, nClients, dbFile);
+        ServerNulthread serverNulthread = new ServerNulthread(portNumber, nThreads, dbFile);
+        ServerPuissanthread serverPuissanthread = new ServerPuissanthread(portNumber, nThreads, dbFile);
+        ServerForthread serverForthread = new ServerForthread(portNumber, nThreads, dbFile);
 
         Thread serverThread = new Thread(() -> {
             try {

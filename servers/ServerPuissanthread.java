@@ -190,6 +190,7 @@ public class ServerPuissanthread {
             List<Integer> remaining_types = new ArrayList<Integer>();
             HashMap<Integer,ArrayList<String>> cache_entry;
             if(containsCache(regex)) {
+                System.out.println(" -- Regex is in Cache");
                 cache_entry = getCache(regex);                              // Take the cache entry if it exits
                 for(int requestType : requestTypes) {                       // Take all types that you are looking for from the cache
                     if(cache_entry.containsKey(requestType)) {
@@ -210,6 +211,7 @@ public class ServerPuissanthread {
             }
 
             if(remaining_types.size() > 0) {                               // if nothing intressting was in the cache or if the cache doesn't contain all wanted types
+                System.out.println(" -- There are remaining types");
                 try {
                     /*
                      * Search of the tags & regex into the Main memory

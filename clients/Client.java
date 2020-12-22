@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import logger.MyLogger;
 
 public class Client {
-    Boolean auto_query_generation = false;
+    Boolean auto_query_generation = true;
     
     protected Socket clientSocket;
     protected PrintWriter clientOut; // to send info to server
@@ -40,8 +40,8 @@ public class Client {
             clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
             int N;
-            if (auto_query_generation){
-                N = rand.nextInt(10) + 1;
+            if(auto_query_generation){
+                N = rand.nextInt(5) + 1;
             } else {
                 N = 5;  // choose the number of request by client
             }
@@ -75,7 +75,7 @@ public class Client {
                 else if (fromServer.equals("")) {
                     count++;
                 } else {
-                    System.out.println("- Server: " + fromServer + "\n"); // TODO recommenter ca
+                    // System.out.println("- Server: " + fromServer + "\n");
                 }
             }
             
