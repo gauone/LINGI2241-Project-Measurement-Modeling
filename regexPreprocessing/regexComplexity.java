@@ -1,20 +1,24 @@
 package regexPreprocessing;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class regexComplexity {
-    
+
     public static void main(String[] args) {
-        ArrayList<String> hard = new ArrayList<String>();
-        ArrayList<String> medium = new ArrayList<String>();
-        ArrayList<String> easy = new ArrayList<String>();
 
         try {
+            BufferedWriter regexEasy = new BufferedWriter(new FileWriter("regexFolder/regexEasy.txt"));
+            BufferedWriter regexMedium = new BufferedWriter(new FileWriter("regexFolder/regexMedium.txt"));
+            BufferedWriter regexHard = new BufferedWriter(new FileWriter("regexFolder/regexHard.txt"));
+            BufferedWriter regexNoMatch = new BufferedWriter(new FileWriter("regexFolder/regexNoMatch.txt"));
+
             BufferedReader brRegex = new BufferedReader(new FileReader("regex.txt"));
             BufferedReader brDB;
 
@@ -39,20 +43,33 @@ public class regexComplexity {
                         
                         if(time < 500) {
                             // Write in regexEasy
+                            regexEasy.write(currentRegex);
                         }
                         else if(time < 1000) {
                             // Write in regexMedium
+                            regexMedium.write(currentRegex);
                         }
                         else {
                             // Write in regexHard
+                            regexHard.write(currentRegex);
                         }
                     }
+                }
+                if (!found){
                     // Write in regexNoMatch
+                    regexNoMatch.write(currentRegex);
                 }
                 found = false;
                 brDB.close();
             }
+            //close the reader
             brRegex.close();
+
+            //close the writers
+            regexEasy.close();
+            regexMedium.close();
+            regexHard.close();
+            regexNoMatch.close();
         }
         catch(IOException e) {
             System.out.println("/!\\ IOException in regexComplexity /!\\");
