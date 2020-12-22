@@ -1,0 +1,137 @@
+
+--- Tests ---
+
+1.Local.lamba10.Nul)
+	Client : /
+		lambda = 10;
+		auto_query_generation = true;
+		N = rand.nextInt(5) + 1;
+        nClients = 50;
+	
+	Server : ServerNulthread
+		nThreads = 5;
+
+1.Local.lamba10.Puissant)
+	Client : /
+		lambda = 10;
+		auto_query_generation = true;
+		N = rand.nextInt(5) + 1;
+        nClients = 50;
+	
+	Server : ServerPuissanthread
+		nThreads = 5;
+		
+###########################################
+
+1.Local.lambda1.Nul)
+	Client : /
+		lambda = 1.0;
+		auto_query_generation = true;
+		N = rand.nextInt(5) + 1;
+        nClients = 50;
+	
+	Server : ServerNulthread
+		nThreads = 5;
+
+1.Local.lambda1.Puissant)
+	Client : /
+		lambda = 1.0;
+		auto_query_generation = true;
+		N = rand.nextInt(5) + 1;
+        nClients = 50;
+	
+	Server : ServerPuissanthread
+		nThreads = 5;
+		
+###########################################
+
+1.Local.Lambda100.Nul)
+	Client : /
+		lambda = 100;
+		auto_query_generation = true;
+		N = rand.nextInt(5) + 1;
+        nClients = 50;
+	
+	Server : ServerNulthread
+		nThreads = 5;
+
+1.Local.Lambda100.Puissant)
+	Client : /
+		lambda = 100;
+		auto_query_generation = true;
+		N = rand.nextInt(5) + 1;
+        nClients = 50;
+	
+	Server : ServerPuissanthread
+		nThreads = 5;
+
+###########################################
+
+
+2.Local.easy.Nul)
+	Client : /
+		lambda = 5.0;
+		auto_query_generation = false => easyRegex
+		N = rand.nextInt(5) + 1;
+        nClients = 50;
+	
+	Server : ServerNulthread
+		nThreads = 5;
+
+2.Local.easy.Puissant)
+	Client : /
+		lambda = 5.0;
+		auto_query_generation = false => easyRegex
+		N = rand.nextInt(5) + 1;
+        nClients = 50;
+	
+	Server : ServerPuissanthread
+		nThreads = 5;
+		
+###########################################
+
+2.Local.medium.Nul)
+	Client : /
+		lambda = 5.0;
+		auto_query_generation = false => mediumRegex
+		N = rand.nextInt(5) + 1;
+        nClients = 50;
+	
+	Server : ServerNulthread
+		nThreads = 5;
+
+2.Local.medium.Puissant)
+	Client : /
+		lambda = 5.0;
+		auto_query_generation = false => mediumRegex
+		N = rand.nextInt(5) + 1;
+        nClients = 50;
+	
+	Server : ServerPuissanthread
+		nThreads = 5;
+
+###########################################
+
+2.Local.hard.Nul)
+	Client : /
+		lambda = 5.0;
+		auto_query_generation = false => hardRegex
+		N = rand.nextInt(5) + 1;
+        nClients = 50;
+	
+	Server : ServerNulthread
+		nThreads = 5;
+
+2.Local.hard.Puissant)
+	Client : /
+		lambda = 5.0;
+		auto_query_generation = false => hardRegex
+		N = rand.nextInt(5) + 1;
+        nClients = 50;
+	
+	Server : ServerPuissanthread
+		nThreads = 5;
+		
+###########################################
+
+Effectuer tout cela aussi en Network et on est bon ;) 

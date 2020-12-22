@@ -3,17 +3,12 @@ package regexPreprocessing;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class regexComplexity {
     
     public static void main(String[] args) {
-        ArrayList<String> hard = new ArrayList<String>();
-        ArrayList<String> medium = new ArrayList<String>();
-        ArrayList<String> easy = new ArrayList<String>();
-
         try {
             BufferedReader brRegex = new BufferedReader(new FileReader("regex.txt"));
             BufferedReader brDB;
