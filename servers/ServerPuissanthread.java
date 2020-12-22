@@ -143,7 +143,7 @@ public class ServerPuissanthread {
                 stopBrain();
             } catch (IOException e) {
                 System.out.println("/!\\ Exception in run() /!\\");
-                System.out.println(e.getMessage());
+                e.printStackTrace();
             }
             // System.out.println(" * End of a thread");
         }
@@ -184,13 +184,11 @@ public class ServerPuissanthread {
 
             List<Integer> remaining_types = new ArrayList<Integer>();
             HashMap<Integer,ArrayList<String>> cache_entry;
-
             /*
              * Search in cache
              */
             if(containsCache(regex)) {
-                // System.out.println(" -- It is in Cache");
-                cache_entry = getCache(request);                            // Take the cache entry if it exits
+                cache_entry = getCache(regex);                              // Take the cache entry if it exits
                 for(int requestType : requestTypes) {                       // Take all types that you are looking for from the cache
                     if(cache_entry.containsKey(requestType)) {
                         ArrayList<String> sendedSentences = cache_entry.get(requestType);
@@ -206,6 +204,7 @@ public class ServerPuissanthread {
             }
             else {                                                          // Create a new cache entry if it doesn't exist
                 cache_entry = new HashMap<Integer, ArrayList<String>>();
+                remaining_types = requestTypes;
             }
 
             if(remaining_types.size() > 0) {                               // if nothing intressting was in the cache or if the cache doesn't contain all wanted types
@@ -236,9 +235,10 @@ public class ServerPuissanthread {
                             }
                         }
                         cache_entry.put(requestType, this_type_sentence);
-                    }
-                    if(!matched) {
-                        System.out.println("No match found for the request : " + request);
+                        
+                        if(!matched) {
+                            System.out.println("No match found for the type(s) and regex : " + requestType + ";" + regex);
+                        }
                     }
                     
 
