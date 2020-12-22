@@ -35,20 +35,22 @@ public class ServerPuissanthread {
     int nThreads = 0;
 
     // Main Memory
-    HashMap<Integer, ArrayList<String>> data = new HashMap<Integer, ArrayList<String>>(); // Hashmap with key : type (Integer);
-                                                                                          // value : sentences (list of String)
+    // ==> Hashmap with key : type (Integer);  value : sentences (list of String)
+    HashMap<Integer, ArrayList<String>> data = new HashMap<Integer, ArrayList<String>>(); 
 
-    // Hashmap with key : regex; Value : (Hashmap with key : types and value sendedSentences)
+    // Cache
+    // ==> Hashmap with key : regex; Value : (Hashmap with key : types and value sendedSentences)
     HashMap<String, HashMap<Integer, ArrayList<String>>> cache = new HashMap<String, HashMap<Integer, ArrayList<String>>>();
-
-    HashMap<String, Integer> cacheUseBit = new HashMap<String, Integer>(); // Hashmap with key : request;
-                                                                           // value : usedBit
+    HashMap<String, Integer> cacheUseBit = new HashMap<String, Integer>(); // Hashmap with key : request; value : usedBit
     int nRequests = 0; // Amount of instructions from the last use bits reset
     boolean resetBits = false; // Set to true when we have to reset the use bits
     final int cacheMaxSize = 10; // We keep maximum the last 100 requests with their responses
     final int nReset = 3; // Reset of the use bits each nReset instructions
 
+    // Memory file
     final String dbFilename;
+
+
 
     /**
      * Constructor
@@ -182,11 +184,11 @@ public class ServerPuissanthread {
 
             regex = splittedLine[1]; 
 
-            List<Integer> remaining_types = new ArrayList<Integer>();
-            HashMap<Integer,ArrayList<String>> cache_entry;
             /*
              * Search in cache
              */
+            List<Integer> remaining_types = new ArrayList<Integer>();
+            HashMap<Integer,ArrayList<String>> cache_entry;
             if(containsCache(regex)) {
                 cache_entry = getCache(regex);                              // Take the cache entry if it exits
                 for(int requestType : requestTypes) {                       // Take all types that you are looking for from the cache

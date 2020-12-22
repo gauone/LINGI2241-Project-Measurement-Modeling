@@ -1,0 +1,40 @@
+- Tout les serveurs sortent-ils bien tous les mêmes résultats ? VALIDE
+
+///// Arguments \\\\\
+String dbFile = "dbdata.txt";
+int nClients = 1;
+String[] requests = {"0,3;de nombreux organismes"};
+
+///// ServerNulthread \\\\\
+- Server: Les gouvernements, de nombreux organismes publics et privs, des familles et des particuliers ont contribu au cours d'une certaine priode  modifier de faon relle l'attitude du public  l'gard de la conduite avec facults affaiblies.  
+
+- Server: La plus rcente commission triennale, dirige par David Scott, a entendu de nombreux organismes et particuliers, y compris tous les ministres de la justice et procureurs gnraux des provinces et territoires, avant de proposer une srie de recommandations srieuses et exhaustives. 
+
+- Server: L'ACMD compte parmi ses membres de nombreux organismes caritatifs qui estiment que les dons postaux ont baiss de dix millions de dollars par jour. 
+
+- Server: Ou encore, que de nombreux organismes caritatifs canadiens aient t forcs de remercier leur personnel et de refuser de rpondre aux gens dans le besoin qui comptent sur eux?  
+
+- Server: On a rencontr de nombreux organismes. 
+
+///// ServerForthread \\\\\
+- Server: Les gouvernements, de nombreux organismes publics et privs, des familles et des particuliers ont contribu au cours d'une certaine priode  modifier de faon relle l'attitude du public  l'gard de la conduite avec facults affaiblies.  
+
+- Server: La plus rcente commission triennale, dirige par David Scott, a entendu de nombreux organismes et particuliers, y compris tous les ministres de la justice et procureurs gnraux des provinces et territoires, avant de proposer une srie de recommandations srieuses et exhaustives. 
+
+- Server: L'ACMD compte parmi ses membres de nombreux organismes caritatifs qui estiment que les dons postaux ont baiss de dix millions de dollars par jour. 
+
+- Server: Ou encore, que de nombreux organismes caritatifs canadiens aient t forcs de remercier leur personnel et de refuser de rpondre aux gens dans le besoin qui comptent sur eux?  
+
+- Server: On a rencontr de nombreux organismes.
+
+///// ServerPuissanthread \\\\\
+- Server: Les gouvernements, de nombreux organismes publics et privs, des familles et des particuliers ont contribu au cours d'une certaine priode  modifier de faon relle l'attitude du public  l'gard de la conduite avec facults affaiblies.  
+
+- Server: La plus rcente commission triennale, dirige par David Scott, a entendu de nombreux organismes et particuliers, y compris tous les ministres de la justice et procureurs gnraux des provinces et territoires, avant de proposer une srie de recommandations srieuses et exhaustives. 
+
+- Server: L'ACMD compte parmi ses membres de nombreux organismes caritatifs qui estiment que les dons postaux ont baiss de dix millions de dollars par jour. 
+
+- Server: Ou encore, que de nombreux organismes caritatifs canadiens aient t forcs de remercier leur personnel et de refuser de rpondre aux gens dans le besoin qui comptent sur eux?  
+
+- Server: On a rencontr de nombreux organismes. 
+

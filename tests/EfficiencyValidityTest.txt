@@ -1,0 +1,15 @@
+- ServerPuissanthread >> ServerForthread >> ServerNulthread ?
+
+///// Arguments \\\\\
+String dbFile = "dbdata.txt";
+int nClients = 4;
+String[] requests = {";Transports", "0;Transports", "1;Transports", "2;Transports", "3;Transports"};
+
+///// ServerNulthread \\\\\
+Total time taken by the clients: 39.518 seconds
+
+///// ServerForthread \\\\\
+Total time taken by the clients: 8.049 seconds
+
+///// ServerPuissanthread \\\\\
+Total time taken by the clients: 22.758 seconds

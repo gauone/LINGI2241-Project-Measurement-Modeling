@@ -38,14 +38,14 @@ public class Client {
             clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
             // int N = rand.nextInt(10) + 1;    // TODO decommenter apres le test
-            int N = 3; // TODO retirer apres le test
+            int N = 5; // TODO retirer apres le test
             System.out.println(" - " + this + " going to launch " + String.valueOf(N) + " requests.");
 
             Thread sender = new Thread(() -> {
                 // launchRequests(lambda, N);
                 // Forcer l'envoi de ces requêtes A SUPPRIMER TODO TODO TODO TODO TODO TODO TODO TODO:
                 try {
-                    String[] requests = {"1;Transport", "0;Transport", "0,3;organisme"};
+                    String[] requests = {";Transports", "0;Transports", "1;Transports", "2;Transports", "3;Transports"};
                     for (String request : requests){
                         long time = (long) getRandomExponential(lambda);
                         TimeUnit.MILLISECONDS.sleep(time);
