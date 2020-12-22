@@ -14,7 +14,7 @@ public class LauncherServer {
         Boolean launchNullServer = true;
         int portNumber = 3900;
         String dbFile = "dbdata.txt";
-        int nClients = 4;
+        int nClients = 1;
 
         // Implementation
         ServerNulthread serverNulthread = new ServerNulthread(portNumber, nClients, dbFile);
