@@ -76,7 +76,7 @@ public class Client {
         try {
             for (int i = 0; i < N; i++) {
                 long time = (long)getRandomExponential(lambda);
-                TimeUnit.MILLISECONDS .sleep(time);
+                TimeUnit.MILLISECONDS.sleep(time);
                 String request = generateRequest();
                 sendRequest(request);
                 //System.out.println(" - Client: send the request : " + request + "\n");

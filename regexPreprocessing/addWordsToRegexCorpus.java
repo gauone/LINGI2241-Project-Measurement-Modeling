@@ -27,7 +27,7 @@ public class addWordsToRegexCorpus {
                         toWrite = rand.nextInt(sentence.length()-j)+1;
                         String regex = sentence.substring(j, j+toWrite);
                         try {
-                            Pattern pattern = Pattern.compile(regex);
+                            Pattern.compile(regex);
                             fileWriter.write(regex+'\n');
                         }
                         catch(PatternSyntaxException e) {
@@ -43,7 +43,7 @@ public class addWordsToRegexCorpus {
             currentLine = bufferedReader.readLine();
             while ((currentLine = bufferedReader.readLine()) != null) {
                 try {
-                    Pattern pattern = Pattern.compile(currentLine);
+                    Pattern.compile(currentLine);
                     fileWriter.write( currentLine + '\n' );
                 }
                 catch(PatternSyntaxException e) {
