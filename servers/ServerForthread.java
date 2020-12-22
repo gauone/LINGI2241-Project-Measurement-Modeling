@@ -41,7 +41,6 @@ public class ServerForthread {
     // Cache
     HashMap<String, ArrayList<String>> cache = new HashMap<String, ArrayList<String>>();    // Hashmap with key : request; value : sendedSentences
     HashMap<String, Integer> cacheUseBit = new HashMap<String, Integer>();                  // Hashmap with key : request; value : usedBit
-    int cacheSize = 0;                                                                      // Amount of request in the cache
     int nRequests = 0;                                                                      // Amount of instructions from the last use bits reset
     boolean resetBits = false;                                                              // Set to true when we have to reset the use bits
     final int cacheMaxSize = 10;                                                            // We keep maximum the last 100 requests with their responses
@@ -173,7 +172,7 @@ public class ServerForthread {
             // System.out.println(" * Search in Cache");
 
             if(containsCache(request)) {
-                // System.out.println(" -- It is in Cache");
+                System.out.println(" -- It is in Cache");
 
                 ArrayList<String> sendedSentences = getCache(request);
                 for(String sendedSentence : sendedSentences) {
@@ -260,14 +259,12 @@ public class ServerForthread {
                         else {
                             removeCache(removedKey);
                             removeCacheUseBit(removedKey);
-                            decrementCacheSize();
                         }
                     }
 
                     // Put the new request in cache
                     putCache(request, sendedSentences);
                     setCacheUseBit(request);
-                    incrementCacheSize();;
                 }
                 catch(PatternSyntaxException e) {
                     System.out.println("/!\\ Wrong request syntax /!\\ ==> request : " + request);
@@ -501,24 +498,7 @@ public class ServerForthread {
      * Return the value of cacheSize synchronously
      */
     public synchronized int getCacheSize() {
-        return this.cacheSize;
-    }
-
-    
-    /**
-     * Increment cacheSize synchronously
-     */
-    public synchronized void incrementCacheSize() {
-        this.cacheSize++;
-    }
-
-
-
-    /**
-     * Decrement cacheSize synchronously
-     */
-    public synchronized void decrementCacheSize() {
-        this.cacheSize--;
+        return this.cache.size();
     }
 
 

@@ -9,10 +9,11 @@ import servers.*;
 public class LauncherServer {
 
     public static void main(String[] args) throws IOException {
+
         // Arguments
         Boolean launchNullServer = false;
         int portNumber = 3900;
-        String dbFile = "dbdata2.txt";
+        String dbFile = "dbdata.txt";
 
         // Implementation
         ServerNulthread serverNulthread = new ServerNulthread(portNumber, 4, dbFile);
