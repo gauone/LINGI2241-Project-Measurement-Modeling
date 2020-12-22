@@ -37,7 +37,8 @@ public class Client {
             clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
             clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-            int N = rand.nextInt(10) + 1;
+            // int N = rand.nextInt(10) + 1;    // TODO decommenter apres le test
+            int N = 6; // TODO retirer apres le test
             System.out.println(" - " + this + " going to launch " + String.valueOf(N) + " requests.");
 
             Thread sender = new Thread(() -> {
