@@ -5,14 +5,12 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class regexComplexity {
 
     public static void main(String[] args) {
-
         try {
             BufferedWriter regexEasy = new BufferedWriter(new FileWriter("regexFolder/regexEasy.txt"));
             BufferedWriter regexMedium = new BufferedWriter(new FileWriter("regexFolder/regexMedium.txt"));
