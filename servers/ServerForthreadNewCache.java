@@ -38,7 +38,7 @@ public class ServerForthreadNewCache {
     HashMap<Integer, ArrayList<String>> data = new HashMap<Integer, ArrayList<String>>(); // Hashmap with key : type (Integer);
                                                                                           // value : sentences (list of String)
 
-    // CacheHashmap with key : request; Value : (Hashmap with key : request and value sendedSentences)
+    // Hashmap with key : regex; Value : (Hashmap with key : types and value sendedSentences)
     HashMap<String, HashMap<Integer, ArrayList<String>>> cache = new HashMap<String, HashMap<Integer, ArrayList<String>>>();
 
     HashMap<String, Integer> cacheUseBit = new HashMap<String, Integer>(); // Hashmap with key : request;
@@ -185,27 +185,31 @@ public class ServerForthreadNewCache {
 
             List<Integer> remaining_types = new ArrayList<Integer>();
             HashMap<Integer,ArrayList<String>> cache_entry;
+
             /*
              * Search in cache
              */
             if(containsCache(regex)) {
                 // System.out.println(" -- It is in Cache");
-                cache_entry = getCache(request);                            // take the cache entry if it exits
-                for(int requestType : requestTypes) {                       // take all types that you are looking for from the cache
-                    if (cache_entry.containsKey(requestType)) {
+                cache_entry = getCache(request);                            // Take the cache entry if it exits
+                for(int requestType : requestTypes) {                       // Take all types that you are looking for from the cache
+                    if(cache_entry.containsKey(requestType)) {
                         ArrayList<String> sendedSentences = cache_entry.get(requestType);
                         for(String sendedSentence : sendedSentences) {
                             clientOut.println(sendedSentence);
                             setCacheUseBit(regex);
                         }
-                    } else {
-                        remaining_types.add(requestType);                   // if the some type we are looking for aren't in cache
+                    }
+                    else {
+                        remaining_types.add(requestType);                   // If some type we are looking for aren't in cache
                     }
                 } 
-            } else {                                                        // create a new cache entry if it doesn't exist
+            }
+            else {                                                          // Create a new cache entry if it doesn't exist
                 cache_entry = new HashMap<Integer, ArrayList<String>>();
             }
-            if (remaining_types.size() > 0) {                               // if nothing intressting was in the cache or if the cache doesn't contain all wanted types
+
+            if(remaining_types.size() > 0) {                               // if nothing intressting was in the cache or if the cache doesn't contain all wanted types
                 try {
                     /*
                      * Search of the tags & regex into the Main memory
@@ -246,7 +250,7 @@ public class ServerForthreadNewCache {
                         String removedKey = "null";
                         boolean search = true;
                         Set<String> keySet = getUseBitSet();
-                        for (Iterator<String> it = keySet.iterator(); it.hasNext() && search;) {    // Looking for a (the first) key with use bit == 0
+                        for(Iterator<String> it = keySet.iterator(); it.hasNext() && search;) {    // Looking for a (the first) key with use bit == 0
                                 String key = it.next();
                                 if(getCacheUseBit(key) == 0) {
                                         removedKey = key;
