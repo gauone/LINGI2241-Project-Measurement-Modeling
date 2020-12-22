@@ -7,6 +7,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import logger.MyLogger;
+
 
 
 /**
@@ -63,7 +65,7 @@ public class ServerNulthreadSkip {
      * @throws IOException
      */
     public void start() throws IOException {
-        System.out.println(" -- Starting ServerNulthreadSkip --");
+        // System.out.println(" -- Starting ServerNulthreadSkip --");
 
         /*
          * Load the data into Main memory
@@ -77,8 +79,8 @@ public class ServerNulthreadSkip {
             // System.out.println("Creating a socket and waiting for the client");
             serverSocket = new ServerSocket(portNumber);    // Create the socket
         } catch (IOException e) {
-            System.out.println("Exception when opening the socket with the portNumber : " + portNumber);
-            System.out.println(e.getMessage());
+            // System.out.println("Exception when opening the socket with the portNumber : " + portNumber);
+            // System.out.println(e.getMessage());
         }
 
         while(getActive()) { // Keep nMaxThreads running
@@ -87,7 +89,7 @@ public class ServerNulthreadSkip {
                 Runnable brain = new Brain(clientSocket, dataTypes, dataSentences);
                 new Thread(brain).start();
                 incrementThreads();
-                System.out.println("Accepting a new client, nThreads : " + nThreads);
+                // System.out.println("Accepting a new client, nThreads : " + nThreads);
             }
         }
     }
@@ -138,8 +140,8 @@ public class ServerNulthreadSkip {
                 stopBrain();
 
             } catch (IOException e) {
-                System.out.println("Exception in run()");
-                System.out.println(e.getMessage());
+                // System.out.println("Exception in run()");
+                // System.out.println(e.getMessage());
             }
         }
 
@@ -196,22 +198,23 @@ public class ServerNulthreadSkip {
                                 // System.out.println("   ===> Responding \"" + returnSentence + "\" to the client");
                                 // System.out.println("\n");
                                 clientOut.println(returnSentence);
-                                Long endTime = System.currentTimeMillis();
-                                Long time = endTime - initTime;
-                                if(time > 10000) {
-                                    System.out.println("We skipped the request : " + request + " after " + time + " seconds");
-                                    breaked = true;
-                                    break;
-                                }
                             }
+                        }
+                        Long endTime = System.currentTimeMillis();
+                        Long time = endTime - initTime;
+                        if(time > 4000) {
+                            System.out.println(request);
+                            MyLogger.getInstance().println(request);
+                            breaked = true;
+                            break;
                         }
                     }
                 }
                 if(!matched) {
-                    System.out.println("No match found for the request : " + request);
+                    // System.out.println("No match found for the request : " + request);
                 }
             } catch (PatternSyntaxException e) {
-                System.out.println("/!\\ Wrong request syntax /!\\");
+                // System.out.println("/!\\ Wrong request syntax /!\\");
             }
         }
 
@@ -226,10 +229,10 @@ public class ServerNulthreadSkip {
                 clientIn.close();
                 clientSocket.close();
                 decrementThreads();
-                System.out.println("Exiting a client, nThreads = " + nThreads);
+                // System.out.println("Exiting a client, nThreads = " + nThreads);
             } catch(IOException e) {
-                System.out.println("IOException at Server.stop()");
-                System.out.println(e.getMessage());
+                // System.out.println("IOException at Server.stop()");
+                // System.out.println(e.getMessage());
             }
         }
     }  
@@ -284,13 +287,13 @@ public class ServerNulthreadSkip {
      * Stop the server and close the streams
      */
     public void stop() {
-        System.out.println(" -- Stopping ServerNulthreadSkip -- ");
+        // System.out.println(" -- Stopping ServerNulthreadSkip -- ");
         active = false;
         try {
 			serverSocket.close();
         } catch(IOException e) {
-            System.out.println("IOException at Server.stop()");
-            System.out.println(e.getMessage());
+            // System.out.println("IOException at Server.stop()");
+            // System.out.println(e.getMessage());
         }
     }
 }
