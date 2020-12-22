@@ -23,7 +23,7 @@ public class RequestDifficultyClient {
 
             BufferedReader bufferedReader = new BufferedReader(new FileReader("regex.txt"));
             String currentLine;
-            int N = 1;
+            int N = 0;
             while ((currentLine = bufferedReader.readLine()) != null) {
                 N++;
                 this.clientOut.println(";" + currentLine);
