@@ -31,8 +31,8 @@ public class LauncherServer {
         String fromUser;
         boolean hasStopped = false;
         while ( !hasStopped && (fromUser = stdIn.readLine()) != "stop" ) {
-            if (launchNullServer) {serverNulthread.stop();}
-            else{ serverForthread.stop();}
+            if(launchNullServer) {serverNulthread.stop();}
+            else {serverForthread.stop();}
             hasStopped = true;
         }
         stdIn.close();
