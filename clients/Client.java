@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 import logger.MyLogger;
 
 public class Client {
+    Boolean auto_query_generation = false;
+    
     protected Socket clientSocket;
     protected PrintWriter clientOut; // to send info to server
     protected BufferedReader clientIn; // to get info from the server
@@ -37,22 +39,28 @@ public class Client {
             clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
             clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-            // int N = rand.nextInt(10) + 1;    // TODO decommenter apres le test
-            int N = 5; // TODO retirer apres le test
+            int N;
+            if (auto_query_generation){
+                N = rand.nextInt(10) + 1;
+            } else {
+                N = 5;  // choose the number of request by client
+            }
             System.out.println(" - " + this + " going to launch " + String.valueOf(N) + " requests.");
 
             Thread sender = new Thread(() -> {
-                // launchRequests(lambda, N);
-                // Forcer l'envoi de ces requêtes A SUPPRIMER TODO TODO TODO TODO TODO TODO TODO TODO:
-                try {
-                    String[] requests = {";Transports", "0;Transports", "1;Transports", "2;Transports", "3;Transports"};
-                    for (String request : requests){
-                        long time = (long) getRandomExponential(lambda);
-                        TimeUnit.MILLISECONDS.sleep(time);
-                        sendRequest(request);
+                if (auto_query_generation) {
+                    launchRequests(lambda, N);
+                } else {
+                    try {
+                        String[] requests = {";Transports", "0;Transports", "1;Transports", "2;Transports", "3;Transports"};
+                        for (String request : requests){
+                            long time = (long) getRandomExponential(lambda);
+                            TimeUnit.MILLISECONDS.sleep(time);
+                            sendRequest(request);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             });
             sender.start();
