@@ -43,10 +43,12 @@ public class ServerForthread {
     HashMap<String, Integer> cacheUseBit = new HashMap<String, Integer>();                  // Hashmap with key : request; value : usedBit
     int nRequests = 0;                                                                      // Amount of instructions from the last use bits reset
     boolean resetBits = false;                                                              // Set to true when we have to reset the use bits
-    final int cacheMaxSize = 10;                                                            // We keep maximum the last 100 requests with their responses
-    final int nReset = 3;                                                                   // Reset of the use bits each nReset instructions
-
+    final int cacheMaxSize = 100;                                                           // We keep maximum the last 100 requests with their responses
+    final int nReset = 10;                                                                  // Reset of the use bits each nReset instructions
+    
+    // Memory file
     final String dbFilename;
+
 
 
     /**
@@ -131,7 +133,7 @@ public class ServerForthread {
                 while((request = clientIn.readLine()) != null) {    // Read a request (that have the following format : "1,2,3;coucou")
                     if(getnRequests() == nReset) {                       // We have to reset the use bits !
                         setResetBits(true);
-                    }
+                    }                    
                     searchLine(request);
                     // System.out.println("\n");
                     // System.out.println(" * Request treated (\\n)");

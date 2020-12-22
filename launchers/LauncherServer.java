@@ -14,18 +14,20 @@ public class LauncherServer {
         Boolean launchNullServer = true;
         int portNumber = 3900;
         String dbFile = "dbdata.txt";
-        int nThreads = 2;
+        int nThreads = 1;
 
         // Implementation
         ServerNulthread serverNulthread = new ServerNulthread(portNumber, nThreads, dbFile);
+        ServerNulthreadSkip serverNulthreadSkip = new ServerNulthreadSkip(portNumber, nThreads, dbFile);
         ServerPuissanthread serverPuissanthread = new ServerPuissanthread(portNumber, nThreads, dbFile);
         ServerForthread serverForthread = new ServerForthread(portNumber, nThreads, dbFile);
 
         Thread serverThread = new Thread(() -> {
             try {
-                if (launchNullServer) {serverNulthread.start();}
-                else {serverForthread.start();}
-                // else {serverPuissanthread.start();}
+                // if(launchNullServer) {serverNulthread.start();}
+                if(launchNullServer) {serverNulthreadSkip.start();}
+                // else {serverForthread.start();}
+                else {serverPuissanthread.start();}
             }
             catch(IOException e) {e.printStackTrace();}
         });
@@ -35,9 +37,10 @@ public class LauncherServer {
 
         boolean hasStopped = false;
         while ( !hasStopped && (stdIn.readLine()) != "stop" ) {
-            if (launchNullServer) {serverNulthread.stop();}
-            else {serverForthread.stop();}
-            // else {serverPuissanthread.stop();}
+            // if (launchNullServer) {serverNulthread.stop();}
+            if(launchNullServer) {serverNulthreadSkip.stop();}
+            // else {serverForthread.stop();}
+            else {serverPuissanthread.stop();}
             hasStopped = true;
         }
         stdIn.close();

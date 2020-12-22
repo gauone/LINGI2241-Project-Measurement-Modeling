@@ -26,12 +26,14 @@ public class addWordsToRegexCorpus {
                     for (int j = 0; j < sentence.length(); j += toWrite) {
                         toWrite = rand.nextInt(sentence.length()-j)+1;
                         String regex = sentence.substring(j, j+toWrite);
-                        try {
-                            Pattern.compile(regex);
-                            fileWriter.write(regex+'\n');
-                        }
-                        catch(PatternSyntaxException e) {
-                            System.out.println("A regex that do not compile was skipped : " + regex);
+                        if(regex.length() > 20) {
+                            try {
+                                Pattern.compile(regex);
+                                fileWriter.write(regex+'\n');
+                            }
+                            catch(PatternSyntaxException e) {
+                                System.out.println("A regex that do not compile was skipped : " + regex);
+                            }
                         }
                     }
                 }
@@ -42,12 +44,14 @@ public class addWordsToRegexCorpus {
             bufferedReader = new BufferedReader(new FileReader("regexPreprocessing/regexCorpus.txt"));
             currentLine = bufferedReader.readLine();
             while ((currentLine = bufferedReader.readLine()) != null) {
-                try {
-                    Pattern.compile(currentLine);
-                    fileWriter.write( currentLine + '\n' );
-                }
-                catch(PatternSyntaxException e) {
-                    System.out.println("A regex that do not compile was skipped : " + currentLine);
+                if(currentLine.length() > 15) {
+                    try {
+                        Pattern.compile(currentLine);
+                        fileWriter.write( currentLine + '\n' );
+                    }
+                    catch(PatternSyntaxException e) {
+                        System.out.println("A regex that do not compile was skipped : " + currentLine);
+                    }
                 }
             }
             bufferedReader.close();
