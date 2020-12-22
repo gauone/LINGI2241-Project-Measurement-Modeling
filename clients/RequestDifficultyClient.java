@@ -28,6 +28,19 @@ public class RequestDifficultyClient {
                 System.out.println("-- testing the request: ;" + currentLine);
             }
 
+            int count = 1;
+            String fromServer;
+            while ( ((fromServer = clientIn.readLine()) != null) && count < 2*N ) {
+                if (fromServer.equals("") && count%2 == 1) {
+                    count++;
+                }
+                else if (fromServer.equals("")) {
+                    count++;
+                } else {
+                    // System.out.println("- Server: " + fromServer + "\n");
+                }
+            }
+
             bufferedReader.close();
             stopClient();
         } catch (UnknownHostException e) {
