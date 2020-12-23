@@ -25,10 +25,10 @@ public class regexComplexity {
             String currentDBLine;
             Pattern pattern;
             Matcher matcher;
-            while ((currentRegex = brRegex.readLine()) != null) {
+            while((currentRegex = brRegex.readLine()) != null) {
                 pattern = Pattern.compile(currentRegex);
                 brDB = new BufferedReader(new FileReader("dbdata.txt"));
-                while ((currentDBLine = brDB.readLine()) != null) {
+                while((currentDBLine = brDB.readLine()) != null) {
                     matcher = pattern.matcher(currentDBLine);
                     if(matcher.find() && !found) {
 
@@ -39,23 +39,23 @@ public class regexComplexity {
                         long endTime = System.nanoTime();
                         long time = endTime - initTime;
                         
-                        if(time < 500) {
+                        if(time < 700) {
                             // Write in regexEasy
-                            regexEasy.write(currentRegex);
+                            regexEasy.write(currentRegex+"\n");
                         }
-                        else if(time < 1000) {
+                        else if(time < 1200) {
                             // Write in regexMedium
-                            regexMedium.write(currentRegex);
+                            regexMedium.write(currentRegex+"\n");
                         }
                         else {
                             // Write in regexHard
-                            regexHard.write(currentRegex);
+                            regexHard.write(currentRegex+"\n");
                         }
                     }
                 }
                 if (!found){
                     // Write in regexNoMatch
-                    regexNoMatch.write(currentRegex);
+                    regexNoMatch.write(currentRegex+"\n");
                 }
                 found = false;
                 brDB.close();
