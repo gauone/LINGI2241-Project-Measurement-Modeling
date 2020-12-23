@@ -1,0 +1,9 @@
+l'obstruction systmatique
+Can the minister tell
+That is what we are talking 
+t des ressources humaine
+ the government is saying
+^([a-zA-Z0-9@*#]{8,15})$
+'(?<document>.*)'\)(?<path>.*)
+^([a-zA-Z0-9@*#]{8,15})$
+'(?<document>.*)'\)(?<path>.*)

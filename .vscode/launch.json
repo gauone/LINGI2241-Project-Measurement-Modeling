@@ -9,6 +9,13 @@
             "name": "Launch regexComplexity",
             "request": "launch",
             "mainClass": "regexPreprocessing.regexComplexity",
+            "projectName": "LINGI2241-Project-Measurement-Modeling_5ccde388"
+        },
+        {
+            "type": "java",
+            "name": "Launch regexComplexity",
+            "request": "launch",
+            "mainClass": "regexPreprocessing.regexComplexity",
             "projectName": "LINGI2241-Project-Measurement-Modeling_7864aa72"
         },
         {

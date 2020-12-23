@@ -41,7 +41,7 @@ public class Client {
 
             int N;
             if(auto_query_generation){
-                N = rand.nextInt(300) + 1;
+                N = rand.nextInt(5) + 1;
             } else {
                 N = 5;  // choose the number of request by client
             }

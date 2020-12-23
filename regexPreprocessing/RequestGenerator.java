@@ -16,7 +16,7 @@ public class RequestGenerator {
     
     private static final RequestGenerator reqGen = new RequestGenerator();
     private int nRegex = 0;
-    String fileName = "regexFolder/regex.txt";
+    String fileName = "regexFolder/regexEasyMatch.txt";
 
 
     private RequestGenerator() {
