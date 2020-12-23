@@ -25,10 +25,10 @@ public class regexComplexity {
             String currentDBLine;
             Pattern pattern;
             Matcher matcher;
-            while ((currentRegex = brRegex.readLine()) != null) {
+            while((currentRegex = brRegex.readLine()) != null) {
                 pattern = Pattern.compile(currentRegex);
                 brDB = new BufferedReader(new FileReader("dbdata.txt"));
-                while ((currentDBLine = brDB.readLine()) != null) {
+                while((currentDBLine = brDB.readLine()) != null) {
                     matcher = pattern.matcher(currentDBLine);
                     if(matcher.find() && !found) {
 
