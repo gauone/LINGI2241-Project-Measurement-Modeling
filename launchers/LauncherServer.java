@@ -11,8 +11,8 @@ public class LauncherServer {
     public static void main(String[] args) throws IOException {
 
         // Arguments
-        Boolean launchNullServer = true;
-        int portNumber = 45234;
+        Boolean launchNullServer = false;
+        int portNumber = 3900;
         String dbFile = "dbdata.txt";
         int nThreads = 5;
 
