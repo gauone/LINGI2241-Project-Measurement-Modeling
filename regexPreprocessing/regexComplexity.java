@@ -39,11 +39,11 @@ public class regexComplexity {
                         long endTime = System.nanoTime();
                         long time = endTime - initTime;
                         
-                        if(time < 700) {
+                        if(time < 900) {
                             // Write in regexEasy
                             regexEasy.write(currentRegex+"\n");
                         }
-                        else if(time < 1200) {
+                        else if(time < 1600) {
                             // Write in regexMedium
                             regexMedium.write(currentRegex+"\n");
                         }
