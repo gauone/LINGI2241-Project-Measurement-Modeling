@@ -7,16 +7,16 @@ import logger.MyLogger;
 public class LauncherClient {
     public static void main(String[] args) {
 
-        Double lambda = 10.0;
+        Double lambda = 0.5;
         int portNumber = 3900;
-        int nClients = 50;
+        int nClients = 1;
         Thread[] threads = new Thread[nClients];
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < nClients; i++) {
             threads[i] = new Thread(() -> {
                 try {
-                    new Client("2a02:2788:f4:59f:74fc:d292:5e0:5652", portNumber, lambda);
+                    new Client("localhost", portNumber, lambda); // "2a02:2788:f4:59f:74fc:d292:5e0:5652"
                     // new ClientSkip("localhost", portNumber);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());

@@ -16,6 +16,7 @@ public class RequestGenerator {
     
     private static final RequestGenerator reqGen = new RequestGenerator();
     private int nRegex = 0;
+    String fileName = "regexFolder/regex.txt";
 
 
     private RequestGenerator() {
@@ -57,7 +58,7 @@ public class RequestGenerator {
         int entry = getRandomNumberInRange(1, this.nRegex);  // Because regex.txt have 960 lines !
         int i = 1;
 
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("regex.txt"));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
         String currentLine;
         while ( ((currentLine = bufferedReader.readLine()) != null) && (i <= entry)) {
             if (i == entry) {
@@ -84,7 +85,7 @@ public class RequestGenerator {
     }
 
     private int regexLength() throws IOException{
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("regex.txt"));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
         String currentLine;
         while ((currentLine = bufferedReader.readLine()) != null) {
             nRegex++;

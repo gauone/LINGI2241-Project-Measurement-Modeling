@@ -15,6 +15,7 @@ public class LogAnalyzer {
     Long maxTime;
     Long meanTime;
     int nTimes;
+    String fileName;
 
     public static void main(String[] args) {
         LogAnalyzer la = new LogAnalyzer();
@@ -28,12 +29,13 @@ public class LogAnalyzer {
         this.maxTime = (long) 0;
         this.meanTime = (long) 0;
         this.nTimes = 0;
+        this.fileName = "myLog.log";
     }
 
     public void computeMinMaxMean() {
 
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader("myLog.log"));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
             String currentLine;
             while((currentLine = bufferedReader.readLine()) != null) {
                 Long currentTime = Long.valueOf(currentLine);
