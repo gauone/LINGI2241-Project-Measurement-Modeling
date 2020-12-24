@@ -112,6 +112,7 @@ public class Client {
         }
     }
 
+    //  using the inverse method to go from a uniform distribution to an exponential
     public double getRandomExponential(double lambda) {
         return 1000 * Math.log(1 - rand.nextDouble()) / (-lambda);
     }
