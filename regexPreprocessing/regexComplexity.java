@@ -12,7 +12,7 @@ public class regexComplexity {
 
 
     public static void main(String[] args) {
-        // MatchComplexity();
+        MatchComplexity();
         // CPUComplexity();
     }
 
@@ -45,7 +45,7 @@ public class regexComplexity {
 
                 System.out.println(matchs + " : " + currentRegex);
 
-                if(matchs < 3) {
+                if(matchs < 2) {
                     // Write in regexEasyMatch
                     regexEasyMatch.write(currentRegex+"\n");
                 }
