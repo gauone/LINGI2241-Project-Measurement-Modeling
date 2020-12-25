@@ -1,14 +1,4 @@
 the story is based on the exploits of the real terrorist known as the jackal , but does not pretend to be 100% factu
-Ce point a t relev par notre collgue de Pictou-Antigoni
-ement n'a que faire des travailleurs du pay
-ieves it is not enoug
- and underpriced its w
-^([a-zA-Z0-9@*#]{8,15})$
-\d{2}.?\d{3}.?\d{3}/?\d{4}-?\d{2}
-'(?<document>.*)'\)(?<path>.*)
-^([a-zA-Z0-9@*#]{8,15})$
-\d{2}.?\d{3}.?\d{3}/?\d{4}-?\d{2}
+Le dput de Broadview-Greenwood dit que je ne fai
 '(?<document>.*)'\)(?<path>.*)
 </?(a|abbr|acronym|address|applet|area|b|base|basefont|bdo|big|blockquote|body|br|button|caption|center|cite|code|col|colgroup|dd|del|dir|div|dfn|dl|dt|em|fieldset|font|form|frame|frameset|h[1-6]|head|hr|html|i|iframe|img|input|ins|isindex|kbd|label|legend|li|link|map|menu|meta|noframes|noscript|object|ol|optgroup|option|p|param|pre|q|s|samp|script|select|small|span|strike|strong|style|sub|sup|table|tbody|td|textarea|tfoot|th|thead|title|tr|tt|u|ul|var|xmp)\b((\"[^\"]*\"|\'[^\']*\')*|[^\"\'>])*>
-\d{2}.?\d{3}.?\d{3}/?\d{4}-?\d{2}
-\d{4}-?\d{4}-?\d{4}-?\d{4}

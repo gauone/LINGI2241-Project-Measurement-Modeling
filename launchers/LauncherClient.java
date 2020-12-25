@@ -7,7 +7,8 @@ import logger.MyLogger;
 public class LauncherClient {
     public static void main(String[] args) {
 
-        Double lambda = 100.0;
+        Double useLambda = 10.0;                // Maximum 10.0 otherwise the ditribution squeeze...
+        Double distLambda = useLambda/1000 ;    // Distlambda = 0.001 => mean waiting time = 1000 [ms] <==> 1 [req/s]
         int portNumber = 3900;
         int nClients = 50;
         Thread[] threads = new Thread[nClients];
@@ -16,7 +17,7 @@ public class LauncherClient {
         for (int i = 0; i < nClients; i++) {
             threads[i] = new Thread(() -> {
                 try {
-                    new Client("2a02:2788:f4:59f:240e:c919:1fff:5d30", portNumber, lambda); // 2a02:2788:f4:59f:240e:c919:1fff:5d30
+                    new Client("2a02:2788:f4:59f:163:eb8f:b089:d411", portNumber, distLambda);
                     // new ClientSkip("localhost", portNumber);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
