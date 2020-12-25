@@ -13,7 +13,7 @@ public class regexComplexity {
 
     public static void main(String[] args) {
         // MatchComplexity();
-        // CPUComplexity();
+        CPUComplexity();
     }
 
 
@@ -79,10 +79,9 @@ public class regexComplexity {
 
     public static void CPUComplexity() {
         try {
-            BufferedWriter regexEasy = new BufferedWriter(new FileWriter("regexFolder/regexEasy.txt"));
-            BufferedWriter regexMedium = new BufferedWriter(new FileWriter("regexFolder/regexMedium.txt"));
-            BufferedWriter regexHard = new BufferedWriter(new FileWriter("regexFolder/regexHard.txt"));
-            BufferedWriter regexNoMatch = new BufferedWriter(new FileWriter("regexFolder/regexNoMatch.txt"));
+            BufferedWriter regexEasy = new BufferedWriter(new FileWriter("regexFolder/regexEasyCPU.txt"));
+            BufferedWriter regexMedium = new BufferedWriter(new FileWriter("regexFolder/regexMediumCPU.txt"));
+            BufferedWriter regexHard = new BufferedWriter(new FileWriter("regexFolder/regexHardCPU.txt"));
 
             BufferedReader brRegex = new BufferedReader(new FileReader("regexFolder/regex.txt"));
             BufferedReader brDB;
@@ -102,15 +101,18 @@ public class regexComplexity {
                         found = true;
 
                         long initTime = System.nanoTime();
+                        pattern = Pattern.compile(currentRegex);
                         matcher = pattern.matcher(currentDBLine);
                         long endTime = System.nanoTime();
-                        long time = endTime - initTime;
+                        long time = (endTime-initTime)/1000;
                         
-                        if(time < 900) {
+                        System.out.println(time);
+                        
+                        if(time < 30) {
                             // Write in regexEasy
                             regexEasy.write(currentRegex+"\n");
                         }
-                        else if(time < 1600) {
+                        else if(time < 80) {
                             // Write in regexMedium
                             regexMedium.write(currentRegex+"\n");
                         }
@@ -121,8 +123,8 @@ public class regexComplexity {
                     }
                 }
                 if (!found){
-                    // Write in regexNoMatch
-                    regexNoMatch.write(currentRegex+"\n");
+                    // Write ALSO in regexEasy becasue even if in this test they are slow because they have to parcours all the db, in the real server it is fair.
+                    regexEasy.write(currentRegex+"\n");
                 }
                 found = false;
                 brDB.close();
@@ -134,7 +136,6 @@ public class regexComplexity {
             regexEasy.close();
             regexMedium.close();
             regexHard.close();
-            regexNoMatch.close();
         }
         catch(IOException e) {
             System.out.println("/!\\ IOException in regexComplexity /!\\");

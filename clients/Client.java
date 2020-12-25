@@ -41,7 +41,8 @@ public class Client {
 
             int N;
             if(auto_query_generation){
-                N = rand.nextInt(5) + 1;
+                // N = 50;
+                N = rand.nextInt(100) + 1;
             } else {
                 N = 5;  // choose the number of request by client
             }
@@ -55,6 +56,7 @@ public class Client {
                         String[] requests = {";Transports", "0;Transports", "1;Transports", "2;Transports", "3;Transports"};
                         for (String request : requests){
                             long time = (long) getRandomExponential(lambda);
+                            System.out.println(time);
                             TimeUnit.MILLISECONDS.sleep(time);
                             sendRequest(request);
                         }
@@ -98,8 +100,9 @@ public class Client {
     public void launchRequests(double lambda, int N) {
         try {
             for (int i = 0; i < N; i++) {
-                long time = (long)getRandomExponential(lambda);
-                TimeUnit.MILLISECONDS.sleep(time);
+                double time = getRandomExponential(lambda);
+                System.out.println(time);
+                TimeUnit.MILLISECONDS.sleep((long)time);
 
                 String request = RequestGenerator.getInstance().generateRequest();
                 sendRequest(request);
@@ -114,7 +117,7 @@ public class Client {
 
     //  using the inverse method to go from a uniform distribution to an exponential
     public double getRandomExponential(double lambda) {
-        return 1000 * Math.log(1 - rand.nextDouble()) / (-lambda);
+        return Math.log(1 - rand.nextDouble()) / (-lambda);
     }
 
     /**
